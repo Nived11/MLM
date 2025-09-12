@@ -10,7 +10,7 @@ const reportRebirthusers = () => {
   const [showDashboard, setShowDashboard] = useState(true);
   return (
     <>
-      <div className="px-4 py-4 text-white">
+      <div className="px-4 py-4 text-white mb-8">
         <ReportHeading />
         <div className="py-8 text-white">
           {showDashboard ? (
