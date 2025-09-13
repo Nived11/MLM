@@ -116,7 +116,7 @@ export const menuLinks = [
             {
                 id: 87,
                 label: "Rebirth Users",
-                path: "/report/rebirth-users",
+                path: "/report/rebirth-user",
             },
         ],
     }

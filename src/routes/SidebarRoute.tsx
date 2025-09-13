@@ -34,7 +34,7 @@ const SidebarRoute = () => {
         <Route path="payout-request" element={<ReportPayoutRequest />} />
         <Route path="bonus-summary" element={<ReportBonusSummary />} />
         <Route path="level-users" element={<ReportLevelUser />} />
-        <Route path="rebirth-users" element={<ReportRebirthUsers />} />
+        <Route path="rebirth-user" element={<ReportRebirthUsers />} />
       </Route>
 
       <Route path="/profile">
