@@ -1,0 +1,85 @@
+import { usesendRequest } from "../hooks/sendRequest";
+import SkeletonTable from "../../components/SkeletonTable";
+
+const Table = () => {
+  const { users, isLoading, error } = usesendRequest();
+
+  return (
+    <div className="overflow-x-auto rounded-md border-[1px] border-transparent p-[1px] bg-gradient-to-r from-[var(--purple-1)] to-[var(--purple-2)] ">
+      <table className="w-full  text-xs sm:text-sm text-white bg-black rounded-md min-w-0  sm:min-w-0">
+        <thead>
+          <tr className="text-left">
+            <th className="px-4 py-4 whitespace-nowrap min-w-[120px]">
+              FROM NAME
+            </th>
+            <th className="px-2 py-4">USERNAME</th>
+            <th className="px-2 py-4">AMOUNT</th>
+            <th className="px-2 py-4">PROOF</th>
+            <th className="px-3 py-4">STATUS</th>
+            <th className="px-2 py-4">LEVEL</th>
+            <th className="px-2 py-4 whitespace-nowrap min-w-[120px]">
+              REQUESTED DATE
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {isLoading ? (
+            <SkeletonTable rows={5} columns={7} />
+          ) : error ? (
+            <tr>
+              <td colSpan={8} className="text-center py-4 text-red-500">
+                {error}
+              </td>
+            </tr>
+          ) : users.length === 0 ? (
+            <tr>
+              <td
+                colSpan={8}
+                className="text-center py-4 border border-gray-800 rounded-md"
+              >
+                No Data found
+              </td>
+            </tr>
+          ) : (
+            users.map((user, idx) => (
+              <tr
+                key={idx}
+                className="bg-gradient-to-r from-[var(--blue-1)] to-[var(--blue-2)] hover:bg-purple-800 border-b-2 border-black rounded-lg"
+              >
+                <td className="px-4 py-3 whitespace-nowrap min-w-[120px]">
+                  {user.fromname}
+                </td>
+                <td className="px-2 py-3">{user.username}</td>
+                <td className="px-2 py-3">{user.amount}</td>
+                <td className="px-2 py-3 whitespace-nowrap">{user.proof}</td>
+                <td className="px-2 py-3">
+                  {user.status === "Completed" ? (
+                    <span className="px-3 py-1 text-xs font-medium rounded-full border border-gray-400 bg-gradient-to-r from-[var(--purple-2)] to-[var(--purple-1)]">
+                      {user.status}
+                    </span>
+                  ) : (
+                    <span className="px-5 py-1 text-xs font-medium rounded-full border border-gray-400 bg-transparent">
+                      {user.status}
+                    </span>
+                  )}
+                </td>
+                <td className="px-2 py-3 whitespace-nowrap min-w-[120px]">
+                  {user.level}
+                </td>
+
+                <td className="px-2 py-3 whitespace-nowrap min-w-[120px]">
+                  {user.requesteddate}
+                </td>
+              </tr>
+            ))
+          )}
+          <tr>
+            <th className=" py-[2px]"></th>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  );
+};
+
+export default Table;

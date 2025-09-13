@@ -1,0 +1,63 @@
+import { useState } from "react";
+import { SlidersHorizontal } from "lucide-react";
+
+const BonusSumDashboard = () => {
+  const [showDashboard, setShowDashboard] = useState(true);
+  return (
+    <>
+      {showDashboard ? (
+        <div className="rounded-xl p-[1px] bg-gradient-to-b from-[var(--purple-1)] to-[var(--purple-2)] mb-8">
+          <div className="rounded-xl bg-black p-6">
+            <h2 className="text-lg font-semibold mb-6 inline-block">
+              Report Dashboard
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div>
+                <label className="block mb-2 text-sm">From Date :</label>
+                <div className="rounded-md p-[1px] w-full max-w-xs lg:max-w-65 bg-gradient-to-r from-[var(--purple-1)] to-[var(--purple-2)]">
+                  <input
+                    type="date"
+                    className="w-full bg-black rounded-md px-4 py-2 focus:outline-none"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block mb-2 text-sm">End Date :</label>
+                <div className="rounded-md p-[1px] w-full max-w-xs lg:max-w-65 bg-gradient-to-r from-[var(--purple-1)] to-[var(--purple-2)]">
+                  <input
+                    type="date"
+                    className="w-full bg-black rounded-md px-3 py-2 focus:outline-none"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap sm:flex-row gap-3 sm:gap-4 mt-6 sm:mt-10">
+              <button className="bg-gradient-to-r from-[var(--purple-1)] to-[var(--purple-2)] px-4 py-1 text-sm sm:text-base rounded-lg hover:opacity-90 w-auto">
+                Apply
+              </button>
+              <button className="bg-blue-600  px-4 py-1 text-sm sm:text-base rounded-lg hover:bg-blue-800  w-auto">
+                Reset
+              </button>
+              <button
+                className="bg-white text-[var(--purple-1)] border border-[var(--purple-1)] px-4 py-1 text-sm sm:text-base rounded-lg hover:bg-gray-100  w-auto"
+                onClick={() => setShowDashboard(false)}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <button
+          onClick={() => setShowDashboard(true)}
+          className="flex items-center gap-2 mb-6 px-4 py-2 rounded-full bg-gradient-to-r from-[var(--purple-1)] to-[var(--blue-2)] hover:opacity-90"
+        >
+          <SlidersHorizontal size={18} />
+        </button>
+      )}
+    </>
+  )
+}
+
+export default BonusSumDashboard

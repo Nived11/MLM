@@ -1,25 +1,8 @@
 import { Route } from "react-router";
 import SidebarLayout from "../layouts/SidebarLayout";
-import {
-  Dashboard,
-  RebirthUsers,
-  RebirthSearch,
-  RebirthInviteForm,
-  Wallet,
-  RebirthAll,
-  SendHelp,
-  SendHelpPay,
-  Report,
+import { Dashboard, RebirthUsers, RebirthSearch, RebirthInviteForm, Wallet, RebirthAll, SendHelp, SendHelpPay,
+  ReportUserJoining, ReportSendRequest,ReportAuc,ReportPayoutRequest,ReportBonusSummary,ReportLevelUser ,ReportRebirthUsers
 } from "../pages";
-import {
-  AucReport,
-  BonusSummary,
-  LevelUsers,
-  PayoutRequest,
-  SendRequest,
-  UserJoining,
-  ReportRebirthUsers,
-} from "../features/Reports";
 
 import Profile from "../features/Profile/components/profile";
 import Account from "../features/Profile/components/account";
@@ -44,13 +27,13 @@ const SidebarRoute = () => {
       </Route>
 
       <Route path="/report">
-        <Route index element={<Report />} />
-        <Route path="user-joining" element={<UserJoining />} />
-        <Route path="send-request" element={<SendRequest />} />
-        <Route path="auc-report" element={<AucReport />} />
-        <Route path="payout-request" element={<PayoutRequest />} />
-        <Route path="bonus-summary" element={<BonusSummary />} />
-        <Route path="level-users" element={<LevelUsers />} />
+        <Route index element={<ReportUserJoining />} />
+        <Route path="user-joining" element={<ReportUserJoining />} />
+        <Route path="send-request" element={<ReportSendRequest />} />
+        <Route path="auc-report" element={<ReportAuc />} />
+        <Route path="payout-request" element={<ReportPayoutRequest />} />
+        <Route path="bonus-summary" element={<ReportBonusSummary />} />
+        <Route path="level-users" element={<ReportLevelUser />} />
         <Route path="rebirth-users" element={<ReportRebirthUsers />} />
       </Route>
 

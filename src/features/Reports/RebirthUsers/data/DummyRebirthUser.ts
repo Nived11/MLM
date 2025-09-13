@@ -1,0 +1,44 @@
+import type { RebirthUsers } from "../type";
+
+export const dummyData: RebirthUsers[] = [
+  {
+    username:"KL20393",
+    fullname:"Nived",
+    sponsorname:"Nived",
+    placementid:"KL20393",
+    email:"nived4148@gmail.com",
+    mobile:"9539106813",
+    dateofjoining:"26-Sep-2023",
+    status:"Pending"
+  },
+  {
+   username:"KL20394",
+    fullname:"Arjun",
+    sponsorname:"Nived",
+    placementid:"KL20394",
+    email:"arjun@example.com",
+    mobile:"9876543210",
+    dateofjoining:"28-Sep-2023",
+    status:"Completed"
+  },
+  {
+    username:"KL20395",
+    fullname:"Meera",
+    sponsorname:"Nived",
+    placementid:"KL20395",
+    email:"meera@example.com",
+    mobile:"9123456780",
+    dateofjoining:"30-Sep-2023",
+    status:"Pending"
+  },
+  {
+    username:"KL20396",
+    fullname:"Nived",
+    sponsorname:"Nived",
+    placementid:"KL20396",
+    email:"nived4148@gmail.com",
+    mobile:"9539106813",
+    dateofjoining:"26-Sep-2023",
+    status:"Pending"
+  },
+];
