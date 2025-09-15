@@ -12,8 +12,8 @@ export default function NetworkNode({ member }: Props) {
   const hasChildren = children.length > 0;
 
   return (
-    <div className="ml-4 border-l border-purple-700 pl-4 min-w-[200px] md:min-w-0">
-      <div className="flex items-center space-x-3 mb-2 flex-shrink-0">
+    <div className="ml-4 border-l border-purple-700 pl-4 min-w-[250px]">
+      <div className="flex items-center space-x-3 mb-2">
         {hasChildren ? (
           <button
             onClick={() => setExpanded(!expanded)}
@@ -25,7 +25,6 @@ export default function NetworkNode({ member }: Props) {
           <span className="w-4" />
         )}
 
-        {/* Gradient background for the member box */}
         <div className="px-3 py-1 bg-gradient-to-r from-purple-1 to-purple-2 text-white rounded-md text-sm font-medium whitespace-nowrap">
           {member.position ? `${member.position} - ${member.name}` : member.name}
         </div>
@@ -36,7 +35,7 @@ export default function NetworkNode({ member }: Props) {
       </div>
 
       {expanded && hasChildren && (
-        <div className="ml-6 space-y-2 flex flex-col md:flex-row flex-wrap bg-black p-2 rounded-md">
+        <div className="flex flex-col space-y-2">
           {children.map((child) => (
             <NetworkNode key={child.id} member={child} />
           ))}

@@ -15,28 +15,24 @@ const RebirthNoUsers = () => {
                             Currently : No Rebirth Users
                         </h3>
 
-
                         <p className="text-base font-light text-white mb-6">
                             No users have completed all levels yet. Once a user finishes the
                             cycle, they will appear here.
                         </p>
 
-
                         <div className="flex flex-col sm:flex-row gap-4">
                             <Button
-                            onClick={() => navigate("/rebirth-users/invite-form")}
+                                onClick={() => navigate("/rebirth-users/invite-form")}
                                 variant="default"
                                 size="lg"
-                                className="bg-gradient-to-r from-[#6A00D4] to-[#5C1053] text-white text-base font-semibold px-6 py-2 rounded-md w-full sm:w-auto"
-                            >
+                                className="bg-gradient-to-r from-[#6A00D4] to-[#5C1053] text-white text-base font-semibold px-6 py-2 rounded-md w-full sm:w-auto">
                                 Invite New Users
                             </Button>
                             <Button
-                            onClick={() => navigate("/rebirth-users/all-users")}
+                                onClick={() => navigate("/rebirth-users/all-users")}
                                 variant="default"
                                 size="lg"
-                                className="bg-gradient-to-r from-[#6A00D4] to-[#5C1053] text-white text-base font-semibold px-6 py-2 rounded-md w-full sm:w-auto"
-                            >
+                                className="bg-gradient-to-r from-[#6A00D4] to-[#5C1053] text-white text-base font-semibold px-6 py-2 rounded-md w-full sm:w-auto">
                                 View all rebirth users
                             </Button>
                         </div>

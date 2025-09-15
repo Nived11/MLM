@@ -1,5 +1,5 @@
 import { Route } from "react-router";
-import { ForgotPassword, Login, SignUp } from "../pages";
+import { ForgotPassword, Login, SignUp } from "../pages/user";
 import PublicLayout from "../layouts/PublicLayout";
 
 const PublicRoute = () => {

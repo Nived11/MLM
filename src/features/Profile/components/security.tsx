@@ -1,12 +1,12 @@
 import { Input } from "../../../components/ui/input";
 import { Button } from "../../../components/ui/button";
-import Header from "./header";
+
 import ProfileButton from "./profilebutton";
 
 export default function SecuritySettings() {
   return (
     <div className="min-h-screen bg-black flex flex-col">
-      <Header />
+      
       <h2 className="text-2xl font-semibold mt-6 mb-4 px-6 text-white">Profile</h2>
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-10 w-full px-6 py-8">
         {/* Left Sidebar */}

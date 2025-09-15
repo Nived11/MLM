@@ -1,54 +1,57 @@
+import { useState } from "react";
 import { Input } from "../../../components/ui/input";
 import { Button } from "../../../components/ui/button";
-import Header from "./header";
 import ProfileButton from "./profilebutton";
 import { useReferral } from "../hooks/referral";
 
 export default function Referral() {
   const { referral, error } = useReferral();
+  const [copied, setCopied] = useState(false);
 
-  //if (loading) return <div className="text-white text-center p-10">Loading...</div>;
   if (error) return <div className="text-red-500 text-center p-10">{error}</div>;
   if (!referral) return null;
 
+  const handleCopy = () => {
+    navigator.clipboard.writeText(referral.referralLink);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000); // reset after 2 seconds
+  };
+
   return (
-    <div className="min-h-screen bg-black flex flex-col">
-      <Header />
-      <h2 className="text-2xl font-semibold mt-6 mb-4 px-6 text-white">Profile</h2>
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-10 w-full px-6 py-8">
+    <div className="min-h-screen bg-black text-white p-4 md:p-6">
+      <h2 className="text-2xl font-semibold mb-6">Profile</h2>
+
+      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-10">
         {/* Left Sidebar */}
-        <div className="md:col-span-1">
-          <ProfileButton />           
+        <div className="md:col-span-1 flex justify-center md:block">
+          <ProfileButton /> {/* Adjusted profile icon size */}
         </div>
 
-        {/* Right Form */}
+        {/* Right Content */}
         <div className="md:col-span-2 border border-purple-600 rounded-lg p-6 bg-gradient-to-b from-black to-gray-900">
           {/* Title */}
-          <h2 className="text-xl font-medium mb-6 text-white">Referral Link</h2>
+          <h2 className="text-xl font-medium mb-6">Referral Link</h2>
 
           <div className="flex flex-col space-y-6">
             {/* Referral Link with Copy Button */}
             <div className="flex flex-col">
               <label className="block text-sm text-gray-300 mb-2">Your Referral Link</label>
-              <div className="flex gap-2">
+              <div className="flex flex-col sm:flex-row gap-2">
                 {/* Input with gradient border */}
                 <div className="flex-1 p-[2px] rounded-md bg-gradient-to-r from-purple-1 to-purple-2 shadow-lg">
                   <Input
                     type="text"
                     value={referral.referralLink}
                     readOnly
-                    className="w-full bg-black border-0 rounded-md px-4 py-3 placeholder-gray-400 text-white"
+                    className="w-full bg-black border-0 rounded-md px-4 py-3 placeholder-gray-400 text-white text-sm sm:text-base"
                   />
                 </div>
                 {/* Copy Button */}
                 <Button
-                  className="px-4 py-3 rounded-md text-white font-medium bg-gradient-to-r from-purple-1 to-purple-2 hover:opacity-90 transition"
-                  onClick={() => {navigator.clipboard.writeText(referral.referralLink);
-                    alert("Referral link copied to clipboard!")
-                  }}
-                  >
-                  Copy
-                  
+                  className="px-4 py-3 rounded-md text-white font-medium bg-gradient-to-r from-purple-1 to-purple-2 hover:opacity-90 transition w-full sm:w-auto"
+                  onClick={handleCopy}
+                >
+                  {copied ? "Copied!" : "Copy"}
                 </Button>
               </div>
             </div>

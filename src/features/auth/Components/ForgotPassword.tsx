@@ -12,28 +12,27 @@ const ForgotPasswordPage: React.FC = () => {
     };
 
     return (
-        <div className="flex min-h-screen w-full bg-black text-white">
-            <div className="hidden md:flex relative">
+        <div className="flex flex-col lg:flex-row h-screen bg-black text-white overflow-hidden">
+            <div className="hidden lg:flex w-full lg:w-1/4 relative">
                 <img
                     src={moneybg}
                     alt="Background Money"
-                    className="md:h-full lg:h-180  object-cover"
+                    className="w-full h-48 sm:h-64 md:h-80 lg:h-full object-cover"
                 />
             </div>
 
-            <div className="flex flex-1 mt-[28px] ml-20 px-6 md:px-20">
-                <div className="w-full max-w-[600px]">
-
-                    <div className="text-center mb-30">
-                        <span className="mx-auto h-14 mb-22 flex justify-center">
-                            {React.createElement(logo, { className: "h-[149px] w-[149px]" })}
+            <div className="flex flex-1 px-5 sm:px-28 mt-8 ">
+                <div className="w-full max-w-md lg:max-w-[600px]">
+                    <div className="text-center mb-10">
+                        <span className="mx-auto mb-6 flex justify-center">
+                            {React.createElement(logo, { className: "h-28 w-28 sm:h-36 sm:w-36" })}
                         </span>
                     </div>
 
-                    <div className="text-start mb-8">
-                        <h2 className="text-2xl font-bold mb-3">Forgot Password?</h2>
+                    <div className="text-start mb-8 mt-12">
+                        <h2 className="text-xl sm:text-2xl font-bold mb-3">Forgot Password?</h2>
                         <p className="text-sm sm:text-base text-gray-300">
-                            Enter your email and we’ll send you a reset link.
+                            Enter your email and we'll send you a reset link.
                         </p>
                     </div>
 
@@ -51,29 +50,21 @@ const ForgotPasswordPage: React.FC = () => {
                             className="w-full rounded-lg px-4 py-3 text-black bg-white focus:outline-none focus:ring-2 focus:ring-purple-600"
                         />
 
-
-                        {/* <button
-                            type="submit"
-                            className="w-full py-3 rounded-lg bg-gradient-to-r from-purple-600 to-violet-700 hover:from-purple-700 hover:to-violet-800 transition font-semibold"
-                        >
-                            
-                        </button> */}
                         <button
                             type="submit"
-                            className="w-full py-3 rounded-md bg-gradient-to-r from-purple-600 to-violet-700 hover:from-purple-700 hover:to-violet-800 transition font-semibold"
+                            className="w-full py-3 rounded-lg bg-gradient-to-r from-purple-600 to-violet-700 hover:from-purple-700 hover:to-violet-800 transition font-semibold"
                         >
                             Send reset password link
                         </button>
                     </form>
 
-                    {/* Footer Links */}
-                    <div className="flex justify-center items-center mt-6 gap-4 text-xs sm:text-sm text-gray-400">
+                    <div className="flex justify-center items-center mt-8 gap-4 text-xs sm:text-sm text-gray-400">
                         <Link to="#" className="hover:underline">
                             Privacy Notice
                         </Link>
                         <span>|</span>
                         <Link to="#" className="hover:underline">
-                            Terms of services
+                            Terms of Services
                         </Link>
                     </div>
                 </div>

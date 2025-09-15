@@ -1,8 +1,23 @@
 import { Route } from "react-router";
 import SidebarLayout from "../layouts/SidebarLayout";
-import { Dashboard, RebirthUsers, RebirthSearch, RebirthInviteForm, Wallet, RebirthAll, SendHelp, SendHelpPay,
-  ReportUserJoining, ReportSendRequest,ReportAuc,ReportPayoutRequest,ReportBonusSummary,ReportLevelUser ,ReportRebirthUsers
-} from "../pages";
+import {
+  Dashboard,
+  RebirthUsers,
+  RebirthSearch,
+  RebirthInviteForm,
+  Wallet,
+  RebirthAll,
+  SendHelp,
+  SendHelpPay,
+  ReportAuc,
+  ReportBonusSummary,
+  ReportLevelUser,
+  ReportPayoutRequest,
+  ReportRebirthUsers,
+  ReportSendRequest,
+  ReportUserJoining
+} from "../pages/user";
+
 
 import Profile from "../features/Profile/components/profile";
 import Account from "../features/Profile/components/account";
@@ -26,7 +41,7 @@ const SidebarRoute = () => {
         <Route path="all-users" element={<RebirthAll />} />
       </Route>
 
-      <Route path="/report">
+          <Route path="/report">
         <Route index element={<ReportUserJoining />} />
         <Route path="user-joining" element={<ReportUserJoining />} />
         <Route path="send-request" element={<ReportSendRequest />} />
@@ -36,7 +51,6 @@ const SidebarRoute = () => {
         <Route path="level-users" element={<ReportLevelUser />} />
         <Route path="rebirth-user" element={<ReportRebirthUsers />} />
       </Route>
-
       <Route path="/profile">
         <Route index element={<Profile />} />
         <Route path="account" element={<Account />} />

@@ -15,24 +15,21 @@ export default function NetworkPage() {
       <Header />
       <h2 className="text-xl sm:text-2xl font-semibold mb-4">Network</h2>
 
-            <div className="overflow-x-auto w-full">
-          {/* Gradient border wrapper */}
-          <div className="inline-block p-1 rounded-2xl bg-gradient-to-r from-purple-1 to-purple-2 shadow-lg">
-            {/* Inner black box */}
-            <div className="bg-black rounded-2xl p-6 min-w-[300px]">
-              <h3 className="text-lg sm:text-xl font-medium mb-6">Hierarchical View</h3>
+      {/* 🔄 Make this outer box scrollable horizontally */}
+      <div className="w-full overflow-x-auto">
+        {/* Wrapper to limit width & apply border */}
+        <div className="inline-block min-w-[300px] p-1 rounded-2xl bg-gradient-to-r from-purple-1 to-purple-2 shadow-lg">
+          <div className="bg-black rounded-2xl p-6">
+            <h3 className="text-lg sm:text-xl font-medium mb-6">Hierarchical View</h3>
 
-              {rootMember ? (
-                <NetworkNode member={rootMember} />
-              ) : (
-                <div className="text-gray-400">No network members found</div>
-              )}
-            </div>
+            {rootMember ? (
+              <NetworkNode member={rootMember} />
+            ) : (
+              <div className="text-gray-400">No network members found</div>
+            )}
           </div>
         </div>
-
-
-
+      </div>
     </div>
   );
 }

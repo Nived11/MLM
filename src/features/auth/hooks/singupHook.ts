@@ -49,7 +49,7 @@ export function useSignupForm() {
             } else {
                 setPincodeStatus("invalid");
             }
-        } catch {
+        } catch{
             setPincodeStatus("invalid");
         }
     };

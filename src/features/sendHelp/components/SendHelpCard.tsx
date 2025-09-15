@@ -19,16 +19,16 @@ const SendHelpCard = ({ amount, status, gpay = true }: SendHelpCardProps) => {
                     Active
                 </div>
                 <div className="w-[119px] h-[31px] rounded-[20px] bg-gradient-to-r from-[#6E07CF] to-[#6C1161] p-[2px]">
-                    <div className="flex items-center justify-center w-full h-full rounded-[20px] bg-gradient-to-r from-[#1C1332] to-[#2F2061] text-base font-light text-white">
+                    <div className="flex items-center justify-center w-full h-full rounded-[20px] bg-gradient-to-r from-[#1C1332] to-[#2F2061] text-sm font-light text-white">
                         {status === "Not Paid" ? "Not Paid" : "Pending"}
                     </div>
                 </div>
             </div>
-            <h3 className="text-xl font-semibold">Send Help</h3>
+            <h3 className="text-lg font-semibold">Send Help</h3>
 
             <div className="flex items-center gap-3">
                 <div className="w-[84px] h-[26px] rounded-[20px] p-[1px] bg-gradient-to-r from-[#6E07CF] to-[#FFFFFF]">
-                    <div className="w-full h-full flex items-center justify-center rounded-[20px] bg-gradient-to-r from-[#1C1332] to-[#2F2061] text-white text-base font-semibold">
+                    <div className="w-full h-full flex items-center justify-center rounded-[20px] bg-gradient-to-r from-[#1C1332] to-[#2F2061] text-white text-sm font-semibold">
                         {amount}
                     </div>
                 </div>
@@ -40,14 +40,14 @@ const SendHelpCard = ({ amount, status, gpay = true }: SendHelpCardProps) => {
                 )}
                 <button
                 onClick={() => navigate("/send-help/payment")}
-                    className="w-[115px] h-[24px] rounded-[8px] bg-white text-[#6A00D4] shadow-[0px_4px_4px_0px_#FFFFFF40] text-sm font-normal flex items-center justify-center">
+                    className="w-[115px] h-[24px] rounded-[8px] bg-white text-[#6A00D4] shadow-[0px_4px_4px_0px_#FFFFFF40] text-xs font-normal flex items-center justify-center">
                     Pay Now
                 </button>
             </div>
 
-            <div className="flex items-center justify-between mt-4">
+            <div className="flex items-center justify-between mt-7">
                 <Button className="w-[195px] h-[42px] rounded-[20px] p-[2px] bg-gradient-to-r from-[#6E07CF] to-[#FFFFFF] flex items-center justify-between">
-                    <div className="w-full h-full flex items-center justify-between px-4 rounded-[20px] bg-gradient-to-r from-[#1C1332] to-[#2F2061] text-white text-base font-light">
+                    <div className="w-full h-full flex items-center justify-between px-4 rounded-[20px] bg-gradient-to-r from-[#1C1332] to-[#2F2061] text-white text-sm font-light">
                         View Profile
                         <ArrowRight size={16} />
                     </div>

@@ -1,3 +1,10 @@
+import {
+    Home, CreditCard,
+    Users,
+    Network,
+    FileBarChart,
+    LogOut,
+} from "lucide-react";
 import Icon1 from "../components/icons/Icon1";
 import Icon2 from "../components/icons/Icon2";
 import Icon3 from "../components/icons/Icon3";
@@ -123,3 +130,43 @@ export const menuLinks = [
 
 
 ]
+
+
+export const adminLinks = [
+    {
+        id: 1,
+        icon: Home,
+        label: "Dashboard",
+        path: "/admin/dashboard",
+    },
+    {
+        id: 2,
+        icon: CreditCard,
+        label: "Payment",
+        path: "/admin/payment",
+    },
+    {
+        id: 3,
+        icon: Users,
+        label: "User Management",
+        path: "/admin/user-management",
+    },
+    {
+        id: 4,
+        icon: Network,
+        label: "Network",
+        path: "/admin/network",
+    },
+    {
+        id: 5,
+        icon: FileBarChart,
+        label: "Report",
+        path: "/admin/report",
+    },
+    {
+        id: 6,
+        icon: LogOut,
+        label: "Logout",
+        path: "/admin/logout",
+    },
+];
