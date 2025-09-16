@@ -92,7 +92,7 @@ const SkeletonUserCard: React.FC<SkeletonUserCardProps> = ({ count = 3 }) => {
               {/* Top Row */}
               <div className="flex items-start gap-5">
                 {/* Profile Icon */}
-                <div className="relative overflow-hidden rounded-full bg-gray-800 w-12 h-12">
+                <div className="relative overflow-hidden rounded-full bg-gray-800 w-15 h-12">
                   <div className="shimmer"></div>
                 </div>
 
@@ -105,7 +105,7 @@ const SkeletonUserCard: React.FC<SkeletonUserCardProps> = ({ count = 3 }) => {
                     <div className="relative overflow-hidden bg-gray-800 rounded h-4 w-16">
                       <div className="shimmer"></div>
                     </div>
-                    <div className="relative overflow-hidden bg-gray-800 rounded-full ml-6 h-5 w-14">
+                    <div className="relative overflow-hidden bg-gray-800 rounded-full ml-2 h-5 w-14">
                       <div className="shimmer"></div>
                     </div>
                   </div>
