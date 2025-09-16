@@ -90,22 +90,22 @@ const SkeletonUserCard: React.FC<SkeletonUserCardProps> = ({ count = 3 }) => {
             {/* Mobile View Skeleton */}
             <div className="py-6 sm:hidden bg-[#1a1730] rounded-lg p-3 flex flex-col gap-3 shadow-md">
               {/* Top Row */}
-              <div className="flex items-start gap-5">
+              <div className="flex items-start gap-4">
                 {/* Profile Icon */}
-                <div className="relative overflow-hidden rounded-full bg-gray-800 w-15 h-12">
+                <div className="relative overflow-hidden rounded-full bg-gray-800 w-12 h-10">
                   <div className="shimmer"></div>
                 </div>
 
                 {/* Right Column */}
                 <div className="flex flex-col gap-4 w-full">
-                  <div className="flex items-center gap-4 flex-wrap">
-                    <div className="relative overflow-hidden bg-gray-800 rounded h-5 w-20">
+                  <div className="flex items-center gap-3 flex-nowrap">
+                    <div className="relative overflow-hidden bg-gray-800 rounded h-5 w-15">
                       <div className="shimmer"></div>
                     </div>
-                    <div className="relative overflow-hidden bg-gray-800 rounded h-4 w-16">
+                    <div className="relative overflow-hidden bg-gray-800 rounded h-4 w-15">
                       <div className="shimmer"></div>
                     </div>
-                    <div className="relative overflow-hidden bg-gray-800 rounded-full ml-2 h-5 w-14">
+                    <div className="relative overflow-hidden bg-gray-800 rounded-full  h-5 w-15">
                       <div className="shimmer"></div>
                     </div>
                   </div>
