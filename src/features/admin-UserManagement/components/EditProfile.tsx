@@ -47,7 +47,7 @@ export default function EditProfile({ user, mode, onClose }: EditProfileProps) {
   };
 
   return (
-    <div ref={formTopRef} className="px-4 ">
+    <div ref={formTopRef}>
       <button
         onClick={onClose}
         className="flex items-center text-2xl font-semibold mb-6 gap-2 text-gray-400 hover:text-white"
