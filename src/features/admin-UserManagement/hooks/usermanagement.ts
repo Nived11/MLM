@@ -8,15 +8,13 @@ export const userManagement = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-
   const fetchUsers = async () => {
-   
     try {
       setIsLoading(true);
       await new Promise((res) => setTimeout(res, 2000));
       setUsers(dummyData);
     } catch (err) {
-      setError(extractErrorMessages(err)|| "could not get data");
+      setError(extractErrorMessages(err) || "could not get data");
     } finally {
       setIsLoading(false);
     }
