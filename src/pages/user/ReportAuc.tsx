@@ -1,6 +1,6 @@
 import Meta from "../../components/custom-ui/Meta";
 import { Pagination } from "../../features/Reports";
-import { AucDashboard , Search, Downloadbtn, AucReportTable} from "../../features/Reports"
+import { AucDashboard , Search, Downloadbtn, Table} from "../../features/Reports/AucReport"
 
 const ReportAuc = () => {
   return (
@@ -20,7 +20,7 @@ const ReportAuc = () => {
 
               <Downloadbtn />
 
-              <AucReportTable />
+              <Table />
 
               <Pagination />
               

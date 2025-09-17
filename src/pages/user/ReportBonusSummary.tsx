@@ -1,6 +1,6 @@
 import Meta from "../../components/custom-ui/Meta";
 import { Pagination } from "../../features/Reports";
-import { BonusSumDashboard , Search, Downloadbtn, BonusSummaryTable} from "../../features/Reports"
+import { BonusSumDashboard , Search, Downloadbtn, Table} from "../../features/Reports/BonusSummary"
 
 const ReportBonusSummary = () => {
   return (
@@ -20,7 +20,7 @@ const ReportBonusSummary = () => {
 
               <Downloadbtn />
 
-              <BonusSummaryTable />
+              <Table />
 
               <Pagination />
               

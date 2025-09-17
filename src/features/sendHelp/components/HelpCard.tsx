@@ -3,6 +3,8 @@ import { Button } from "../../../components/ui/button";
 import gpayImg from "../../../assets/images/gpay.png";
 import { IoLogoWhatsapp } from "react-icons/io";
 import { useNavigate } from "react-router-dom"
+import ProfilePopup from "./ProfilePopup";
+import { useState } from "react";
 
 interface HelpCardProps {
   level: number;
@@ -13,11 +15,14 @@ interface HelpCardProps {
 
 const HelpCard = ({ level, amount, status, gpay = true }: HelpCardProps) => {
   const navigate = useNavigate()
+    const [isProfileOpen, setIsProfileOpen] = useState(false);
+
   return (
+   <>
     <div className="rounded-[20px] bg-gradient-to-br from-[#1C1332] to-[#2F2061] p-4 w-[367px] flex flex-col gap-4 text-white shadow-lg">
       <div className="flex items-center justify-between">
 
-        <div className="w-[119px] h-[31px] flex items-center justify-center rounded-[20px] text-base font-light bg-gradient-to-r from-[#6A00D4] to-[#5C1053]">
+        <div className="w-[119px] h-[31px] flex items-center justify-center rounded-[20px] text-sm font-light bg-gradient-to-r from-[#6A00D4] to-[#5C1053]">
           Active
         </div>
 
@@ -65,6 +70,7 @@ const HelpCard = ({ level, amount, status, gpay = true }: HelpCardProps) => {
 
       <div className="flex items-center justify-between mt-4">
         <Button
+         onClick={() => setIsProfileOpen(true)}
           className="w-[195px] h-[42px] rounded-[20px] p-[2px] bg-gradient-to-r from-[#6E07CF] to-[#FFFFFF] flex items-center justify-between">
           <div className="w-full h-full flex items-center justify-between px-4 rounded-[20px] bg-gradient-to-r from-[#1C1332] to-[#2F2061] text-white text-sm font-light">
             View Profile
@@ -78,6 +84,16 @@ const HelpCard = ({ level, amount, status, gpay = true }: HelpCardProps) => {
         </button>
       </div>
     </div>
+     <ProfilePopup
+        isOpen={isProfileOpen}
+        onClose={() => setIsProfileOpen(false)}
+        name="PHILOMENA PANAKKAL"
+        email="blessymolinchrist@gmail.com"
+        phone="8078036775"
+        altPhone="8078026775"
+        status="Active"
+      />
+   </>
   );
 };
 

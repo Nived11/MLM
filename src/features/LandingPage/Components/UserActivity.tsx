@@ -14,10 +14,10 @@ const requests = [
 
 const UserActivity = () => {
     return (
-        <div className="bg-gradient-to-br to-blue-2 from-blue-1 rounded-3xl p-4 sm:p-8 flex flex-col gap-10  mb-5 ">
-            <div className="flex flex-col w-full">
-                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 sm:gap-12 lg:gap-18 pl-2 pt-4 sm:pl-5">
-                    <div className="flex flex-col items-center items-start sm:items-start w-full sm:w-auto">
+        <div className="bg-gradient-to-br to-blue-2 from-blue-1 rounded-3xl p-4 sm:p-6 flex flex-col gap-10  mb-5 max-w-280 ">
+            <div className="flex flex-col w-200">
+                <div className="flex flex-col sm:flex-row items-start  gap-6 sm:gap-12 lg:gap-18 pl-2 pt-4 sm:pl-5">
+                    <div className="flex flex-col items-center  sm:items-start w-full sm:w-auto">
                         <div className="w-12 h-12 sm:w-20 sm:h-20 lg:w-22 lg:h-22 rounded-full bg-white flex items-center justify-center overflow-hidden flex-shrink-0 mb-6 sm:mb-10 lg:mb-13">
                             <img
                                 src={profile}
@@ -34,7 +34,7 @@ const UserActivity = () => {
                         </div>
                     </div>
 
-                    <div className="flex-1 flex justify-center sm:justify-start items-center">
+                    <div className="flex-1 flex justify-center sm:justify-start items-center sm:mt-o">
                         <img
                             src={chart}
                             alt="Graph Chart"
@@ -44,14 +44,14 @@ const UserActivity = () => {
                 </div>
             </div>
 
-            <div className="w-full max-w-full">
+            <div className="w-full">
                 <div className="flex items-center gap-2 sm:gap-8 lg:gap-15 ml-2 sm:ml-6">
                     <PieIcon className="text-white w-6 h-6 sm:w-7 sm:h-7" />
                     <span className="text-white text-base sm:text-xl lg:text-2xl font-semibold">
                         Level Requests
                     </span>
                 </div>
-                <div className="pl-10 pr-5 sm:pl-6 md:pl-20 lg:pl-30 mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4 lg:gap-6 w-full">
+                <div className="pl-10 pr-5 sm:pl-6 md:pl-20 lg:pl-30 lg:pb-6 mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4 lg:gap-6 w-full">
                     {requests.map((req, idx) => (
                         <div
                             key={idx}

@@ -1,6 +1,6 @@
 import Meta from "../../components/custom-ui/Meta";
 import { Pagination } from "../../features/Reports";
-import { LevelUserDashboard , Search, Downloadbtn,LevelUserTable } from "../../features/Reports"
+import { LevelUserDashboard , Search, Downloadbtn, Table} from "../../features/Reports/LevelUser"
 
 const ReportLevelUser = () => {
   return (
@@ -20,7 +20,7 @@ const ReportLevelUser = () => {
 
               <Downloadbtn />
 
-              <LevelUserTable />
+              <Table />
 
               <Pagination />
               

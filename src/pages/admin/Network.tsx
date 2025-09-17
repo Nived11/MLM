@@ -1,9 +1,10 @@
+import AdminNetwork from "../../features/admin-network/components/AdminNetworks"
 
 const Network = () => {
   return (
-    <div>
-      
-    </div>
+    <>
+      <AdminNetwork/>
+    </>
   )
 }
 

@@ -27,6 +27,7 @@ export function useSignupForm() {
     const [confirmError, setConfirmError] = useState("");
     const [sponsorId, setSponsorId] = useState("");
     const [sponsorName, setSponsorName] = useState("");
+    const [formLoading, setFormLoading] = useState(false)
     const [pincodeStatus, setPincodeStatus] = useState<
         null | "valid" | "invalid" | "checking"
     >(null);
@@ -49,7 +50,7 @@ export function useSignupForm() {
             } else {
                 setPincodeStatus("invalid");
             }
-        } catch{
+        } catch {
             setPincodeStatus("invalid");
         }
     };
@@ -70,6 +71,10 @@ export function useSignupForm() {
     }, [location.search, params.refId]);
 
     const onSubmit = (data: SignupFormData) => {
+        setFormLoading(true)
+        setTimeout(() => {
+            setFormLoading(false)
+        }, 1000)
         console.log("Form Data:", data);
     };
 
@@ -94,5 +99,6 @@ export function useSignupForm() {
         handlePincodeBlur,
         pincodeStatus,
         onSubmit,
+        formLoading
     };
 }

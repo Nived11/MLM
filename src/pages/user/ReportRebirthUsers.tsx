@@ -1,6 +1,6 @@
 import Meta from "../../components/custom-ui/Meta";
 import { Pagination } from "../../features/Reports";
-import { RebirthUsersDashboard , Search, Downloadbtn, RebirthTable} from "../../features/Reports"
+import { RebirthUsersDashboard , Search, Downloadbtn, Table} from "../../features/Reports/RebirthUsers"
 
 const ReportRebirthUsers = () => {
   return (
@@ -20,7 +20,7 @@ const ReportRebirthUsers = () => {
 
               <Downloadbtn />
 
-              <RebirthTable />
+              <Table />
 
               <Pagination />
               

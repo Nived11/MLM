@@ -1,6 +1,6 @@
 import Meta from "../../components/custom-ui/Meta";
 import { Pagination } from "../../features/Reports";
-import { SendRequestDashboard , Search, Downloadbtn, SendRequestTable} from "../../features/Reports"
+import { SendRequestDashboard , Search, Downloadbtn, Table} from "../../features/Reports/SendRequest"
 
 const ReportSendRequest = () => {
   return (
@@ -20,7 +20,7 @@ const ReportSendRequest = () => {
 
               <Downloadbtn />
 
-              <SendRequestTable />
+              <Table />
 
               <Pagination />
               

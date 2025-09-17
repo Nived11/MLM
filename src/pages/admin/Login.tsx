@@ -1,10 +1,8 @@
 
-const Login = () => {
-  return (
-    <div>
-      
-    </div>
-  )
-}
+import AdminLoginForm from "../../features/auth/Components/AdminLoginForm";
 
-export default Login
+const Login = () => {
+  return <AdminLoginForm />;
+};
+
+export default Login;

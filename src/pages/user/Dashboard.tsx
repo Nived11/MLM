@@ -10,7 +10,7 @@ import UserActivity from "../../features/LandingPage/Components/UserActivity";
 
 const Dashboard = () => {
   return (
-    <div className="md:mt-10 sm:ml-2 max-w-full overflow-hidden ">
+    <div className="md:mt-10 sm:ml-6 max-w-full overflow-hidden ">
       <Meta page="dashboard" />
 
       <div className="ml-6 mr-6 mt-2 sm:mr-6 ">
@@ -21,7 +21,7 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <div className="ml-6 mr-6 mt-4 sm:mr-6 sm:mt-6">
+      <div className="ml-6 mr-6 mt-4 sm:mr-6 sm:mt-6 max-w-280">
         <h3 className="text-lg sm:text-xl md:text-2xl font-semibold text-white mb-4">Level User Count</h3>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <LevelUserCount />

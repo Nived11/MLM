@@ -18,15 +18,15 @@ const RebirthUsers: React.FC = () => {
     ];
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 lg:gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 lg:gap-6 max-w-280">
             {rebirthUsers.map((user) => (
                 <div
                     key={user.id}
-                    className="bg-black rounded-3xl sm:rounded-4xl p-4 sm:p-6 lg:p-8 border border-purple-900"
+                    className="bg-black rounded-3xl sm:rounded-4xl p-4 sm:p-6 lg:p-8 border border-purple-900 max-w-130"
                 >
                     {/* Header */}
                     <div className="flex justify-between items-start mb-3 sm:mb-4 lg:mb-5">
-                        <span className="text-white font-medium text-base sm:text-xl lg:text-2xl">
+                        <span className="text-white font-medium text-base sm:text-xl">
                             {user.status}
                         </span>
                         <span className="text-gray-400 text-xs sm:text-sm lg:text-base mt-2 sm:mt-4 lg:mt-6">
@@ -36,7 +36,7 @@ const RebirthUsers: React.FC = () => {
 
                     <div className="w-full bg-[#595959] rounded-full h-1 sm:h-1.5 lg:h-2 mb-2 sm:mb-3" />
 
-                    <span className="text-yellow-400 text-base sm:text-xl lg:text-2xl font-medium">
+                    <span className="text-yellow-400 text-base sm:text-xl font-medium">
                         {user.level}
                     </span>
                 </div>

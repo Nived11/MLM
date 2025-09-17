@@ -2,7 +2,6 @@ import {
     Home, CreditCard,
     Users,
     Network,
-    FileBarChart,
     LogOut,
 } from "lucide-react";
 import Icon1 from "../components/icons/Icon1";
@@ -16,9 +15,9 @@ import Icon7 from "../components/icons/Icon7";
 export const sidebarItems = [
     { id: 1, label: "Dashboard", icon: Icon1, path: "/dashboard" },
     { id: 2, label: "Send Help", icon: Icon2, path: "/send-help" },
-    { id: 3, label: "Club wallet", icon: Icon3, path: "/club-wallet" },
+    { id: 3, label: "Club wallet", icon: Icon3, path: "/wallet" },
     { id: 4, label: "Rebirth Users", icon: Icon4, path: "/rebirth-users" },
-    { id: 5, label: "Network", icon: Icon5, path: "/network" },
+    { id: 5, label: "Network", icon: Icon5, path: "networks/hierarchical-view" },
     { id: 6, label: "Report", icon: Icon6, path: "/report" },
     { id: 7, label: "Logout", icon: Icon7, path: "/logout" },
 ];
@@ -159,12 +158,6 @@ export const adminLinks = [
     },
     {
         id: 5,
-        icon: FileBarChart,
-        label: "Report",
-        path: "/admin/report",
-    },
-    {
-        id: 6,
         icon: LogOut,
         label: "Logout",
         path: "/admin/logout",

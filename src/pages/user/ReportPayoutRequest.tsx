@@ -1,6 +1,6 @@
 import Meta from "../../components/custom-ui/Meta";
 import { Pagination } from "../../features/Reports";
-import { PayoutRequestDashboard , Search, Downloadbtn,PayoutRequestTable } from "../../features/Reports"
+import { PayoutRequestDashboard , Search, Downloadbtn, Table} from "../../features/Reports/PayoutRequest"
 
 const ReportPayoutRequest = () => {
   return (
@@ -20,7 +20,7 @@ const ReportPayoutRequest = () => {
 
               <Downloadbtn />
 
-              <PayoutRequestTable />
+              <Table />
 
               <Pagination />
               

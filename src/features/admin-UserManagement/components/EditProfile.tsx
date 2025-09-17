@@ -103,7 +103,7 @@ export default function EditProfile({ user, mode, onClose }: EditProfileProps) {
 
           <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
             {error && (
-              <div className="md:col-span-2 border border-red-500 rounded-lg text-red-500 p-3 rounded mb-2 text-center">
+              <div className="md:col-span-2 border border-red-500 rounded-lg text-red-500 p-3  mb-2 text-center">
                 {error}
               </div>
             )}

@@ -1,6 +1,6 @@
 import Meta from "../../components/custom-ui/Meta";
 import { Pagination } from "../../features/Reports";
-import { UserJoiningDashboard , Search, Downloadbtn, UserJoiningTable} from "../../features/Reports"
+import { UserJoiningDashboard , Search, Downloadbtn, Table} from "../../features/Reports/UserJoining"
 
 const ReportUserJoining = () => {
   return (
@@ -20,7 +20,7 @@ const ReportUserJoining = () => {
 
               <Downloadbtn />
 
-              <UserJoiningTable />
+              <Table />
 
               <Pagination />
               
