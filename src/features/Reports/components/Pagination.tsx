@@ -1,12 +1,57 @@
-const Pagination = ( ) => {
+import React from "react";
+
+interface PaginationProps {
+  currentPage: number;
+  totalCount: number;
+  rowsPerPage: number;
+  onPageChange: (page: number) => void;
+}
+
+const Pagination: React.FC<PaginationProps> = ({
+  currentPage,
+  totalCount,
+  rowsPerPage,
+  onPageChange,
+}) => {
+  const totalPages = Math.ceil(totalCount / rowsPerPage);
+  const start = (currentPage - 1) * rowsPerPage + 1;
+  const end = Math.min(currentPage * rowsPerPage, totalCount);
+
   return (
     <div className="flex flex-col sm:flex-row justify-center sm:justify-between items-center sm:items-center mt-6 text-sm text-gray-400 gap-3">
-      <span className="text-xs sm:text-sm">Showing 0 to 0 of 365 entries</span>
-      <div className="flex gap-8 sm:gap-6 flex-wrap justify-center sm:justify-end mt-5 items-center">
-        <button className="hover:text-white text-sm sm:text-sm ">First</button>
-        <button className="hover:text-white text-sm sm:text-sm">Previous</button>
-        <button className="hover:text-white text-sm sm:text-sm">Next</button>
-        <button className="hover:text-white text-sm sm:text-sm">Last</button>
+      <span className="text-xs sm:text-sm">
+        Showing {totalCount === 0 ? 0 : start} to {end} of {totalCount} entries
+      </span>
+
+      <div className="flex gap-4 sm:gap-6 flex-wrap justify-center sm:justify-end mt-5 items-center">
+        <button
+          disabled={currentPage === 1}
+          onClick={() => onPageChange(1)}
+          className="hover:text-white text-sm disabled:opacity-50"
+        >
+          First
+        </button>
+        <button
+          disabled={currentPage === 1}
+          onClick={() => onPageChange(currentPage - 1)}
+          className="hover:text-white text-sm disabled:opacity-50"
+        >
+          Previous
+        </button>
+        <button
+          disabled={currentPage === totalPages || totalPages === 0}
+          onClick={() => onPageChange(currentPage + 1)}
+          className="hover:text-white text-sm disabled:opacity-50"
+        >
+          Next
+        </button>
+        <button
+          disabled={currentPage === totalPages || totalPages === 0}
+          onClick={() => onPageChange(totalPages)}
+          className="hover:text-white text-sm disabled:opacity-50"
+        >
+          Last
+        </button>
       </div>
     </div>
   );

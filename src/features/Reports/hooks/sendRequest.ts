@@ -1,0 +1,152 @@
+import { useState, useEffect } from "react";
+import type { SendRequest } from "../types";
+import api from "../../../lib/api";
+import formatDate from "../utils/dateFormat";
+import { extractErrorMessages } from "../../../utils/helpers/extractErrorMessage";
+import { toast } from "sonner";
+
+interface Filters {
+  user_id?: string;
+  status?: string;
+  start_date?: string;
+  end_date?: string;
+  limit?: number;
+  offset?: number;
+}
+
+export const useSendRequestReport = (filters: Filters) => {
+  const [users, setUsers] = useState<SendRequest[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [totalCount, setTotalCount] = useState<number>(0);
+
+  ////////////////// Build query string //////////////////
+  const buildQuery = () => {
+    return new URLSearchParams(
+      Object.entries(filters).reduce((acc, [k, v]) => {
+        if (v !== "" && v !== undefined && v !== null) {
+          acc[k] = String(v);
+        }
+        return acc;
+      }, {} as Record<string, string>)
+    ).toString();
+  };
+
+  ////////////////// Fetch Users //////////////////
+  const fetchUsers = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      const query = buildQuery();
+      const res = await api.get(`/send-request-report/${query ? `?${query}` : ""}`);
+      const response = res.data;
+
+      const rawData = Array.isArray(response) ? response : response.data || [];
+      const total = Array.isArray(response) ? response.length : response.total || 0;
+
+      const mapped: SendRequest[] = rawData.map((r: any) => ({
+        fromname: r.from_name,
+        username: r.username,
+        amount: r.amount,
+        status: r.status,
+        proof: r.proof,
+        level: r.level,
+        requesteddate:formatDate(r.date),
+      }));
+
+      setUsers(mapped);
+      setTotalCount(total);
+    } catch (err) {
+      setError(extractErrorMessages(err) || "Could not fetch Send Request Report");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  ////////////////// Exports //////////////////
+  const exportPDF = async () => {
+    try {
+      const res = await api.get(`/send-request-report/?export=pdf`, { responseType: "blob" });
+      downloadFile(res.data, "send-request-report.pdf");
+    } catch (err) {
+      toast.error(extractErrorMessages(err));
+    }
+  };
+
+  const exportExcel = async () => {
+    try {
+      const res = await api.get(`/send-request-report/?export=xlsx`, { responseType: "blob" });
+      downloadFile(res.data, "send-request-report.xlsx");
+    } catch (err) {
+      toast.error(extractErrorMessages(err));
+    }
+  };
+
+  const exportCSV = async () => {
+    try {
+      const res = await api.get(`/send-request-report/?export=csv`, { responseType: "blob" });
+      downloadFile(res.data, "send-request-report.csv");
+    } catch (err) {
+      toast.error(extractErrorMessages(err));
+    }
+  };
+
+  ////////////////// File Downloader //////////////////
+  const downloadFile = (data: Blob, filename: string) => {
+    const url = window.URL.createObjectURL(new Blob([data]));
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", filename);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  };
+
+  ////////////////// Copy //////////////////
+  const copyToClipboard = () => {
+    if (!users.length) return toast.error("No data to copy");
+
+    const rows = [
+      ["From Name", "Username", "Amount", "Status", "Proof", "Level", "Date"],
+      ...users.map((u) => [u.fromname, u.username, String(u.amount), u.status, u.proof, String(u.level), u.requesteddate]),
+    ];
+
+    const colWidths = rows[0].map((_, i) => Math.max(...rows.map((r) => r[i].length)));
+    const formatted = rows
+      .map((r) => r.map((c, i) => c.padEnd(colWidths[i] + 2)).join(""))
+      .join("\n");
+
+    navigator.clipboard.writeText(formatted);
+    toast.success("Copied to clipboard!");
+  };
+
+  ////////////////// Print //////////////////
+  const getPrintData = () => {
+    if (!users.length) {
+      toast.error("No data to print");
+      return null;
+    }
+    return [
+      ["From Name", "Username", "Amount", "Status", "Proof", "Level", "Date"],
+      ...users.map((u) => [u.fromname, u.username, String(u.amount), u.status, u.proof, String(u.level), u.requesteddate]),
+    ];
+  };
+
+  useEffect(() => {
+    fetchUsers();
+  }, [JSON.stringify(filters)]);
+
+  return {
+    users,
+    isLoading,
+    error,
+    totalCount,
+    exportPDF,
+    exportExcel,
+    exportCSV,
+    copyToClipboard,
+    getPrintData,
+    refetch: fetchUsers,
+  };
+};
