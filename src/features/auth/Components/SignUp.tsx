@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { Link } from "react-router-dom";
 import logo from "../../../components/icons/logo";
 import moneybg from "../../../assets/images/money-bg.png";
 import { useSignupForm } from "../hooks/singupHook";
+import { usePayment } from "../../../hooks/use-payment";
+import axios from "axios";
 
+export const baseURL = import.meta.env.VITE_API_URL || "";
 const SignupForm: React.FC = () => {
     const {
         register,
@@ -25,11 +28,59 @@ const SignupForm: React.FC = () => {
         setSponsorName,
         handlePincodeBlur,
         pincodeStatus,
-        onSubmit,
         setConfirmError,
-        formLoading
-
+        formLoading,
+        setFormLoading
     } = useSignupForm();
+    const { initiatePayment, isLoading: paymentLoading, error: paymentError } = usePayment();
+    const [error, setError] = useState<string | null>(null);
+
+    const onSubmit = async (data: any) => {
+        setError("");
+        setFormLoading(true);
+        try {
+            setFormLoading(true);
+            const body = {
+                placement_id: data.placementId,
+                pincode: data.pincode,
+                payment_type: data.paymentType,
+                upi_number: data.upiNumber,
+                first_name: data.firstName,
+                last_name: data.lastName,
+                email: data.email,
+                mobile: data.mobile,
+                whatsapp_number: data.whatsapp,
+                password: data.password,
+                confirm_password: data.confirmPassword,
+                sponsor_id: data.sponsorId,
+                amount: data.amount
+            };
+            console.log("Registration payload:", body);
+
+            const res = await axios.post(`${baseURL}/register/`, body);
+
+            const token = res.data.registration_token;
+            if (res.status === 201 || res.status === 200) {
+                const paymentDetails = {
+                    amount: data.amount,
+                    user_email: data.email,
+                    user_name: `${data.firstName} ${data.lastName}`,
+                    registration_token: token,
+                    phone_number: data.mobile,
+                };
+                await initiatePayment(paymentDetails);
+            }
+        } catch (err: any) {
+            //
+            console.error("Registration error:", err.response?.data);
+            const msg =
+                err.response?.data?.detail || err.message || "Registration failed. Try again.";
+            setError(msg);
+            return false;
+        } finally {
+            setFormLoading(false);
+        }
+    };
     return (
         <div className="flex flex-col md:flex-row min-h-screen bg-black text-white">
             <div className="hidden lg:flex w-full lg:w-1/4 relative">
@@ -132,9 +183,9 @@ const SignupForm: React.FC = () => {
                                 className="w-full rounded-md px-4 py-3 text-black bg-white focus:ring-2 focus:ring-purple-600"
                             >
                                 <option value="">Select Payment Type</option>
-                                <option value="gpay">GPay</option>
-                                <option value="phonepe">PhonePe</option>
-                                <option value="paytm">Paytm</option>
+                                <option value="GPay">GPay</option>
+                                <option value="PhonePe">PhonePe</option>
+                                <option value="Paytm">Paytm</option>
                             </select>
                             {errors.paymentType && (
                                 <p className="text-red-500 text-sm">
@@ -324,6 +375,7 @@ const SignupForm: React.FC = () => {
                                 {errors.terms.message}
                             </p>
                         )}
+                        {error && <p className="text-red-500 text-sm">{error}</p>}
 
                         {/* Button */}
                         <button
@@ -339,6 +391,12 @@ const SignupForm: React.FC = () => {
                             'Sign Up'
                         )}
                         </button>
+                        {paymentError && (
+                            <p className="text-red-500 text-center mt-2">{paymentError}</p>
+                        )}
+                        {paymentLoading && (
+                            <p className="text-purple-500 text-center mt-2">Redirecting to payment...</p>
+                        )}
                     </form>
 
                     <p className="mt-8 text-center text-sm text-gray-400">

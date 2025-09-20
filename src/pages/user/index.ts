@@ -16,3 +16,10 @@ export {default as ReportPayoutRequest} from "./ReportPayoutRequest"
 export {default as ReportBonusSummary} from "./ReportBonusSummary"
 export {default as ReportLevelUser} from "./ReportLevelUser"
 export {default as ReportRebirthUsers} from "./ReportRebirthUsers"
+
+export { ProfileDetails } from "./ProfileDetails";
+export { ProfileAccount } from "./ProfileAccout";
+export { ProfileKyc } from "./ProfileKyc";
+export { ProfileSecurity } from "./ProfileSecurity";
+export { ProfileReferral } from "./ProfileReferral";
+export { UserNetwork } from "./UserNetwork";

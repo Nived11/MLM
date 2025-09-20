@@ -12,7 +12,7 @@ const ReportUserJoining = () => {
     start_date: "",
     end_date: "",
     status: "all",
-    limit: 1,
+    limit: 10,
     offset: 0,
   });
 

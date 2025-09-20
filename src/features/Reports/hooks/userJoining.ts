@@ -57,7 +57,7 @@ export const useUserJoining = (filters: Filters) => {
         mobile: u.mobile,
         dateOfJoining: formatDate(u.joined_date),
         referralCount: u.direct_count,
-        rank: `LEVEL ${u.level}`,
+        rank: u.level,
         status: u.status,
       }));
 
@@ -126,28 +126,39 @@ const exportCSV = async () => {
 
   //////////////////// COPY TO CLIPBOARD ///////////////////////////
 
-  const copyToClipboard = () => {
-    if (!users.length) return toast.error("No data to copy");
+  const copyToClipboard = async () => {
+  if (!users.length) return toast.error("No data to copy");
 
-    const rows = [
-      ["Username", "Fullname", "Email", "Mobile", "DateOfJoining", "ReferralCount", "Rank", "Status"],
-      ...users.map(u => [
-        u.username, u.fullname, u.email, u.mobile,
-        u.dateOfJoining, String(u.referralCount), u.rank, u.status
-      ])
-    ];
+  const rows = [
+    ["Username", "Fullname", "Email", "Mobile", "DateOfJoining", "ReferralCount", "Rank", "Status"],
+    ...users.map(u => [
+      u.username || "N/A",
+      u.fullname || "N/A",
+      u.email || "N/A",
+      u.mobile || "N/A",
+      u.dateOfJoining || "-",
+      String(u.referralCount ?? "0"),
+      u.rank || "N/A",
+      u.status || "N/A",
+    ]),
+  ];
 
-    const colWidths = rows[0].map((_, i) =>
-      Math.max(...rows.map(r => r[i].length))
-    );
+  const colWidths = rows[0].map((_, i) =>
+    Math.max(...rows.map(r => String(r[i]).length))
+  );
 
-    const formatted = rows.map(r =>
-      r.map((c, i) => c.padEnd(colWidths[i] + 2)).join("")
-    ).join("\n");
+  const formatted = rows
+    .map(r => r.map((c, i) => String(c).padEnd(colWidths[i] + 2)).join(""))
+    .join("\n");
 
-    navigator.clipboard.writeText(formatted);
+  try {
+    await navigator.clipboard.writeText(formatted);
     toast.success("Copied to clipboard!");
-  };
+  } catch (err) {
+    console.error("Clipboard copy failed:", err);
+    toast.error("Failed to copy to clipboard");
+  }
+};
 
   //////////////////// PRINT DATA /////////////////////
   const getPrintData = () => {

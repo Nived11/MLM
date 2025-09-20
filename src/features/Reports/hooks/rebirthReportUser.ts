@@ -40,6 +40,8 @@ export const useRebirthReportusers = (filters: Filters) => {
       setError(null);
 
       const query = buildQuery();
+      console.log("query", query);
+      
       const res = await api.get(`/referrals/list/${query ? `?${query}` : ""}`);
       console.log(res.data);
 
@@ -110,20 +112,20 @@ export const useRebirthReportusers = (filters: Filters) => {
   };
 
   ////////////////// Copy //////////////////
-  const copyToClipboard = () => {
+  const copyToClipboard =async () => {
     if (!users.length) return toast.error("No data to copy");
 
     const rows = [
       ["Username", "Fullname", "Sponsor", "PlacementID", "Email", "Mobile", "DateOfJoining", "Status"],
       ...users.map((u) => [
-        u.username,
-        u.fullname,
-        u.sponsorname,
-        u.placementid,
-        u.email,
-        u.mobile,
-        u.dateofjoining,
-        u.status,
+        u.username  || "N/A",
+        u.fullname  || "N/A",
+        u.sponsorname  || "N/A",
+        u.placementid || "N/A",
+        u.email || "N/A",
+        u.mobile  || "N/A",
+        u.dateofjoining || "N/A",
+        u.status  || "N/A",
       ]),
     ];
 
@@ -132,8 +134,13 @@ export const useRebirthReportusers = (filters: Filters) => {
       .map((r) => r.map((c, i) => c.padEnd(colWidths[i] + 2)).join(""))
       .join("\n");
 
-    navigator.clipboard.writeText(formatted);
+    try {
+    await navigator.clipboard.writeText(formatted);
     toast.success("Copied to clipboard!");
+  } catch (err) {
+    console.error("Clipboard copy failed:", err);
+    toast.error("Failed to copy to clipboard");
+  }
   };
 
   ////////////////// Print //////////////////

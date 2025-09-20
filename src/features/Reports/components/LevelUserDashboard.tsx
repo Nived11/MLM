@@ -1,30 +1,32 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { SlidersHorizontal } from "lucide-react";
-import { useLevelUsers } from "../hooks/levelUsers"
+import type { LevelUsers } from "../types";
 
 interface Props {
+  users: LevelUsers[];
   onApply: (filters: {
     start_date: string;
     end_date: string;
-    from_user: string;
+    search: string;
     status: string;
   }) => void;
 }
-
-const LevelUserDashboard = ({ onApply }: Props) => {
+const LevelUserDashboard = ({ users,onApply }: Props) => {
   const [showDashboard, setShowDashboard] = useState(true);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [fromUser, setFromUser] = useState("");
   const [status, setStatus] = useState("All");
 
-  const { users } = useLevelUsers({});
+  const uniqueUsernames = useMemo(() => {
+    return Array.from(new Set(users.map((u) => u.username).filter(Boolean)));
+  }, [users]);
 
   const handleApply = () => {
     onApply({
       start_date: startDate,
       end_date: endDate,
-      from_user: fromUser,
+      search: fromUser,
       status,
     });
   };
@@ -34,7 +36,7 @@ const LevelUserDashboard = ({ onApply }: Props) => {
     setEndDate("");
     setFromUser("");
     setStatus("All");
-    onApply({ start_date: "", end_date: "", from_user: "", status: "All" });
+    onApply({ start_date: "", end_date: "", search: "", status: "All" });
   };
 
   return (
@@ -76,7 +78,7 @@ const LevelUserDashboard = ({ onApply }: Props) => {
                 <label className="block mb-2 text-sm">From User :</label>
                 <div className="p-[1px] rounded-md bg-gradient-to-r from-[var(--purple-1)] to-[var(--purple-2)] max-w-xs lg:max-w-50">
                   <select
-                    value={fromUser}
+                      value={fromUser}
                     onChange={(e) => setFromUser(e.target.value)}
                     className="w-full bg-black rounded-md px-5 py-2 pr-8 text-white text-sm cursor-pointer focus:outline-none appearance-none"
                     style={{
@@ -87,7 +89,8 @@ const LevelUserDashboard = ({ onApply }: Props) => {
                     }}
                   >
                     <option value="">Select a user</option>
-                    {Array.from(new Set(users.map((u) => u.username))).map((name) => (
+                    <option value="121212">1111 a user</option>
+                    {uniqueUsernames.map((name) => (
                       <option key={name} value={name}>
                         {name}
                       </option>

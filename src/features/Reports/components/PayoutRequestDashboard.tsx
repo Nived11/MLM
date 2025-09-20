@@ -65,10 +65,9 @@ const PayoutRequestDashboard  = ({ onApply }: Props) => {
                       backgroundSize: "30px",
                     }}
                   >
-                    <option>Select Status</option>
-                    <option>Approved</option>
+                    <option>All</option>
+                    <option>Completed</option>
                     <option>Pending</option>
-                    <option>Cancelled</option>
                   </select>
                 </div>
               </div>

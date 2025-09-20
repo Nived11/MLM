@@ -1,58 +1,87 @@
 import { useState, useEffect } from "react";
+import api from "../../../lib/api";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 export interface Member {
   id: string;
   name: string;
   level: number;
-  position?: "Left" | "Right";
-  children: Member[]; // always an array
+  position?: string;
+  children: Member[];
 }
-
-// Sample names pool
-const sampleNames = [
-  "Aiden", "Sophia", "Liam", "Olivia",
-  "Noah", "Emma", "Lucas", "Isabella",
-  "Ethan", "Mia", "James", "Amelia",
-  "Benjamin", "Charlotte", "Elijah", "Harper",
-  "Henry", "Evelyn", "Alexander", "Abigail"
-];
-
-// Get next name in sequence
-let nameIndex = 0;
-const getNextName = (): string => {
-  const name = sampleNames[nameIndex % sampleNames.length];
-  nameIndex++;
-  return name;
-};
-
-// Recursive tree generator (6 levels, last level = leaf)
-const generateTree = (id: string, level: number, maxLevel: number): Member => {
-  const name = getNextName();
-
-  if (level >= maxLevel) return { id, name, level, children: [] };
-
-  return {
-    id,
-    name,
-    level,
-    children: [
-      { ...generateTree(id + "L", level + 1, maxLevel), position: "Left" },
-      { ...generateTree(id + "R", level + 1, maxLevel), position: "Right" },
-    ],
-  };
-};
 
 export const useNetwork = () => {
   const [members, setMembers] = useState<Member[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const mapReferral = (ref: any, level: number): Member => {
+  const children: Member[] = [];
+
+    if (ref.next_level) {
+      for (const key of Object.keys(ref.next_level)) {
+        ref.next_level[key].forEach((child: any) => {
+          children.push(mapReferral(child, level + 1));
+        });
+      }
+    }
+
+    return {
+      id: ref.user_id,
+      name: ref.name,
+      level,
+      position: ref.position,
+      children,
+    };
+  };
+
+ 
+  const mapToMemberTree = (user: any): Member => {
+    const children: Member[] = [];
+    const referrals = user.referrals?.["Level 1"] || [];
+    referrals.forEach((ref: any) => {
+      children.push(mapReferral(ref, 1));
+    });
+
+    return {
+      id: user.user_id,
+      name: user.first_name + " " + user.last_name,
+      level: 0,
+      position: user.position,
+      children,
+    };
+  };
 
   useEffect(() => {
-    // generate dummy tree
-    nameIndex = 0;
-    const root = generateTree("ROOT", 1, 6);
-    setMembers([root]);
-    setLoading(false);
+    const fetchNetwork = async () => {
+      try {
+        setLoading(true);
+        const response = await api.get("/profile/"); 
+        const rootMember = mapToMemberTree(response.data);
+        setMembers([rootMember]); 
+      } catch (err :any) {
+        let message = "Failed to load account details";
+        if (axios.isAxiosError(err)) {
+          if (err.response?.data?.error) {
+            message = err.response.data.error;
+          } else if (err.message) {
+            message = err.message;
+          }
+        }
+        setError(message);
+        toast.error(message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchNetwork();
   }, []);
 
-  return { members, loading };
+  return {
+    members,
+    loading,
+    error,
+    setMembers, 
+  };
 };

@@ -13,7 +13,7 @@ import {
 
 const ReportAuc = () => {
   const [filters, setFilters] = useState({
-    fromuser: "",
+    search: "",
     status: "all",
     start_date: "",
     end_date: "",
@@ -76,7 +76,7 @@ const ReportAuc = () => {
                 onSearch={(text) =>
                   setFilters((prev) => ({
                     ...prev,
-                    fromuser: text,
+                    search: text,
                     offset: 0,
                   }))
                 }

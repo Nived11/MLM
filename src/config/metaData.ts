@@ -36,7 +36,16 @@ const metaData = {
     Report: {
         title: `Report |${APP_NAME} `,
         description: "Reach out to our team with your inquiries.",
-    }
+    },
+    Profile: {
+        title: `Profile | ${APP_NAME}`,
+        description: "Manage your profile settings, update personal information, and customize your account preferences securely in one place.",
+    },
+    Network: {
+        title: `Network | ${APP_NAME}`,
+        description: "Reach out to our team with your inquiries."
+    },
+
 };
 
 export type PageName = keyof typeof metaData;

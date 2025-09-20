@@ -44,7 +44,9 @@ interface PaymentSuccessResponse {
 }
 
 interface PaymentErrorResponse {
-    plan_id?: string[];
+    registration_token?: string[];
+    user_level_id?: string[];
+    detail?: string;
 }
 
 export const usePayment = () => {
@@ -55,11 +57,10 @@ export const usePayment = () => {
 
     const navigate = useNavigate();
 
-    const initiatePayment = async (details: string) => {
+    const initiatePayment = async (details: { registration_token: string }) => {
         setIsLoading(true);
         setError("");
         setPurchase(null);
-
 
         const isLoaded = await loadRazorpayScript();
         if (!isLoaded) {
@@ -69,8 +70,11 @@ export const usePayment = () => {
         }
 
         try {
+            console.log("payload:", details);
             const res = await api.post<PaymentCreateResponse>(
-                '/create', details);
+                '/razorpay/order/', { registration_token: details.registration_token });
+
+            console.log("payment response:", res.data);
 
             const data = res.data;
             const options = {
@@ -84,7 +88,7 @@ export const usePayment = () => {
                     try {
                         setIsVerifying(true)
                         const verifyRes = await api.post<PaymentSuccessResponse>(
-                            '/verify',
+                            '/razorpay/verify/',
                             { ...response }
                         );
 
@@ -95,8 +99,20 @@ export const usePayment = () => {
                         } else {
                             setError("Payment verification failed.");
                         }
-                    } catch (err) {
-                        setError("Failed to verify payment.");
+                    } catch (err: any) {
+
+                        //
+                        console.error("Verify status", err.response?.status);
+                        console.error("Verify data:", err.response?.data);
+
+                        const e = err.response?.data;
+                        if (e?.user_level_id?.[0]) {
+                            setError(e.user_level_id[0]);
+                        } else if (err.response?.status === 500) {
+                            setError("Server not responding!");
+                        } else {
+                            setError(err.message || "Something went wrong.");
+                        }
                     } finally {
                         setIsVerifying(false)
                     }
@@ -120,10 +136,14 @@ export const usePayment = () => {
             const rzp = new window.Razorpay(options);
             rzp.open();
         } catch (err: any) {
+            //
+            console.error("Status:", err.response?.status);
+            console.error("Data:", err.response?.data);
+
             const responseData: PaymentErrorResponse = err.response?.data;
 
-            if (responseData?.plan_id?.[0]) {
-                setError(responseData.plan_id[0]);
+            if (responseData?.registration_token?.[0]) {
+                setError(responseData.registration_token[0]);
             } if (err.response?.status === 500) {
                 setError("Server not responding!");
             } else {

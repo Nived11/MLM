@@ -1,15 +1,16 @@
-import { Button } from "../../../components/ui/button";
+import { Button } from "../../../components/ui/button"
+import { useAllReferrals } from "../hooks/useAllReferrals"
 
 const RebirthAllUsers = () => {
-  const users = [
-    { username: "LX75082", date: "04-Sep-2025", level: "Level 1", status: "Active" },
-    { username: "LX75082", date: "04-Sep-2025", level: "Level 1", status: "Active" },
-    { username: "LX75082", date: "04-Sep-2025", level: "Level 1", status: "Active" },
-    { username: "LX75082", date: "04-Sep-2025", level: "Level 1", status: "Active" },
-    { username: "LX75082", date: "04-Sep-2025", level: "Level 1", status: "Active" },
-    { username: "LX75082", date: "04-Sep-2025", level: "Level 1", status: "Active" },
-    { username: "LX75082", date: "04-Sep-2025", level: "Level 1", status: "Active" },
-  ];
+  const { data: users, loading, error } = useAllReferrals()
+
+  if (loading) {
+    return <p className="text-white text-center">Loading...</p>
+  }
+
+  if (error) {
+    return <p className="text-red-500 text-center">{error}</p>
+  }
 
   return (
     <div className="bg-background text-foreground flex items-center justify-center px-3 sm:px-4 py-6 sm:py-8">
@@ -31,28 +32,31 @@ const RebirthAllUsers = () => {
               </thead>
 
               <tbody>
-                {users.map((user, index) => (
-                  <tr key={index} className="text-white text-xs sm:text-sm">
+                {users.map((user) => (
+                  <tr key={user.user_id} className="text-white text-xs sm:text-sm">
                     <td className="py-1.5 pr-3">
-                      <div className="w-[130px] sm:w-[150px] h-[34px] sm:h-[36px] rounded-lg p-[1px] [background:linear-gradient(180deg,#6A00D4_0%,#5C1053_100%)]">
+                      <div className="w-[130px] sm:w-[150px] h-[34px] sm:h-[36px] rounded-lg p-[1px] 
+                        [background:linear-gradient(180deg,#6A00D4_0%,#5C1053_100%)]">
                         <div className="w-full h-full flex items-center justify-center rounded-lg bg-background">
-                          {user.username}
+                          {user.user_id}
                         </div>
                       </div>
                     </td>
 
                     <td className="py-1.5 pr-3">
-                      <div className="w-[120px] sm:w-[140px] h-[34px] sm:h-[36px] rounded-lg p-[1px] [background:linear-gradient(180deg,#6A00D4_0%,#5C1053_100%)]">
+                      <div className="w-[120px] sm:w-[140px] h-[34px] sm:h-[36px] rounded-lg p-[1px] 
+                        [background:linear-gradient(180deg,#6A00D4_0%,#5C1053_100%)]">
                         <div className="w-full h-full flex items-center justify-center rounded-lg bg-background">
-                          {user.date}
+                          {new Date(user.joined_date).toLocaleDateString()}
                         </div>
                       </div>
                     </td>
 
                     <td className="py-1.5 pr-3">
-                      <div className="w-[110px] sm:w-[130px] h-[34px] sm:h-[36px] rounded-lg p-[1px] [background:linear-gradient(180deg,#6A00D4_0%,#5C1053_100%)]">
+                      <div className="w-[110px] sm:w-[130px] h-[34px] sm:h-[36px] rounded-lg p-[1px] 
+                        [background:linear-gradient(180deg,#6A00D4_0%,#5C1053_100%)]">
                         <div className="w-full h-full flex items-center justify-center rounded-lg bg-background">
-                          {user.level}
+                          Level {user.level}
                         </div>
                       </div>
                     </td>
@@ -60,7 +64,9 @@ const RebirthAllUsers = () => {
                     <td className="py-1.5">
                       <Button
                         size="sm"
-                        className="w-[100px] sm:w-[120px] h-[34px] sm:h-[36px] rounded-lg bg-gradient-to-r from-[#6A00D4] to-[#5C1053] text-white text-xs sm:text-sm font-medium">
+                        className="w-[100px] sm:w-[120px] h-[34px] sm:h-[36px] rounded-lg 
+                        bg-gradient-to-r from-[#6A00D4] to-[#5C1053] text-white text-xs sm:text-sm font-medium"
+                      >
                         {user.status}
                       </Button>
                     </td>
@@ -72,7 +78,7 @@ const RebirthAllUsers = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default RebirthAllUsers;
+export default RebirthAllUsers

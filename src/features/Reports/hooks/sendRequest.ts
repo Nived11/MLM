@@ -104,21 +104,35 @@ export const useSendRequestReport = (filters: Filters) => {
   };
 
   ////////////////// Copy //////////////////
-  const copyToClipboard = () => {
+  const copyToClipboard =async () => {
     if (!users.length) return toast.error("No data to copy");
 
     const rows = [
       ["From Name", "Username", "Amount", "Status", "Proof", "Level", "Date"],
-      ...users.map((u) => [u.fromname, u.username, String(u.amount), u.status, u.proof, String(u.level), u.requesteddate]),
+     ...users.map((u) => [
+      u.fromname || "N/A",
+      u.username || "N/A",
+      String(u.amount ?? "0"),
+      u.status || "N/A",
+      u.proof || "N/A",
+      String(u.level ?? "N/A"),
+      u.requesteddate || "-",
+    ]),
     ];
-
+    console.log(rows);
+    
     const colWidths = rows[0].map((_, i) => Math.max(...rows.map((r) => r[i].length)));
     const formatted = rows
       .map((r) => r.map((c, i) => c.padEnd(colWidths[i] + 2)).join(""))
       .join("\n");
 
-    navigator.clipboard.writeText(formatted);
+   try {
+    await navigator.clipboard.writeText(formatted);
     toast.success("Copied to clipboard!");
+  } catch (err) {
+    console.error("Clipboard copy failed:", err);
+    toast.error("Failed to copy to clipboard");
+  }
   };
 
   ////////////////// Print //////////////////

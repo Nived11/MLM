@@ -41,18 +41,18 @@ export function useSignupForm() {
             setPincodeStatus("invalid");
             return;
         }
-        setPincodeStatus("checking");
-        try {
-            const res = await fetch(`https://api.postalpincode.in/pincode/${pin}`);
-            const data = await res.json();
-            if (data[0].Status === "Success") {
-                setPincodeStatus("valid");
-            } else {
-                setPincodeStatus("invalid");
-            }
-        } catch {
-            setPincodeStatus("invalid");
-        }
+        // setPincodeStatus("checking");
+        // try {
+        //     const res = await fetch(`https://api.postalpincode.in/pincode/${pin}`);
+        //     const data = await res.json();
+        //     if (data[0].Status === "Success") {
+        //         setPincodeStatus("valid");
+        //     } else {
+        //         setPincodeStatus("invalid");
+        //     }
+        // } catch {
+        //     setPincodeStatus("invalid");
+        // }
     };
 
     useEffect(() => {
@@ -70,13 +70,13 @@ export function useSignupForm() {
         }
     }, [location.search, params.refId]);
 
-    const onSubmit = (data: SignupFormData) => {
-        setFormLoading(true)
-        setTimeout(() => {
-            setFormLoading(false)
-        }, 1000)
-        console.log("Form Data:", data);
-    };
+    // const onSubmit = (data: SignupFormData) => {
+    //     setFormLoading(true)
+    //     setTimeout(() => {
+    //         setFormLoading(false)
+    //     }, 1000)
+    //     console.log("Form Data:", data);
+    // };
 
     return {
         register,
@@ -98,7 +98,7 @@ export function useSignupForm() {
         setSponsorName,
         handlePincodeBlur,
         pincodeStatus,
-        onSubmit,
-        formLoading
+        formLoading,
+        setFormLoading
     };
 }

@@ -1,27 +1,47 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { SlidersHorizontal } from "lucide-react";
-import { useRebirthReportusers } from "../hooks/rebirthReportUser";
+import type { RebirthUsers } from "../types";
 
 interface Props {
+  users: RebirthUsers[];
   onApply: (filters: {user_id: string; start_date: string; end_date: string; status: string }) => void;
 }
-const RebirthUsersDashboard = ({ onApply }: Props) => {
+const RebirthUsersDashboard = ({ users, onApply }: Props) => {
   const [showDashboard, setShowDashboard] = useState(true);
   const [startDate, setStartDate] = useState("");
   const [username, setUsername] = useState("");
   const [endDate, setEndDate] = useState("");
   const [status, setStatus] = useState("all");
 
-   const { users } = useRebirthReportusers({});
 
-  const handleApply = () => {
-    onApply({ user_id: username, start_date: startDate, end_date: endDate, status });
-  };
+    const uniqueUsernames = useMemo(
+    () => Array.from(new Set(users.map((u) => u.username).filter(Boolean))),
+    [users]
+  );
 
-  const handleReset = () => {
-    setUsername(""); setStartDate(""); setEndDate(""); setStatus("all");
-    onApply({ user_id: "", start_date: "", end_date: "", status: "all" });
-  };
+const handleApply = () => {
+  onApply({
+    user_id: username || "",
+    start_date: startDate || "",
+    end_date: endDate || "",
+    status: status === "all" ? "" : status,
+  });
+};
+
+
+ const handleReset = () => {
+  setUsername("");
+  setStartDate("");
+  setEndDate("");
+  setStatus("all");
+  onApply({
+    user_id: "",
+    start_date: "",
+    end_date: "",
+    status: "",
+  });
+};
+
   return (
     <>
       {showDashboard ? (
@@ -35,7 +55,7 @@ const RebirthUsersDashboard = ({ onApply }: Props) => {
                 <label className="block mb-2 text-sm">username :</label>
                 <div className="p-[1px] rounded-md bg-gradient-to-r from-[var(--purple-1)] to-[var(--purple-2)] max-w-xs lg:max-w-55">
                   <select
-                    value={username}
+                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     className="w-full bg-black rounded-md px-5 py-2 pr-8 text-white text-sm cursor-pointer focus:outline-none appearance-none"
                     style={{
@@ -46,11 +66,11 @@ const RebirthUsersDashboard = ({ onApply }: Props) => {
                     }}
                   >
                      <option value="">Select User</option>
-                  {users.map((u) => (
-                    <option key={u.username} value={u.username}>
-                      {u.username}
-                    </option>
-                  ))}
+                    {uniqueUsernames.map((name) => (
+                      <option key={name} value={name}>
+                        {name}
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>

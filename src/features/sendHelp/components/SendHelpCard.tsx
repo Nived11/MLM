@@ -4,15 +4,16 @@ import { Button } from "../../../components/ui/button";
 import gpayImg from "../../../assets/images/gpay.png";
 import { IoLogoWhatsapp } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
-import ProfilePopup from "./ProfilePopup"; 
+import ProfilePopup from "./ProfilePopup";
 
 interface SendHelpCardProps {
   amount: number;
   status: "Pending" | "Not Paid";
   gpay?: boolean;
+  levelId: number; 
 }
 
-const SendHelpCard = ({ amount, status, gpay = true }: SendHelpCardProps) => {
+const SendHelpCard = ({ amount, status, gpay = true, levelId  }: SendHelpCardProps) => {
   const navigate = useNavigate();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
@@ -30,7 +31,7 @@ const SendHelpCard = ({ amount, status, gpay = true }: SendHelpCardProps) => {
           </div>
         </div>
 
-        <h3 className="text-lg font-semibold">Send Help</h3>
+        <h3 className="text-lg font-semibold">Refer Help</h3>
 
         <div className="flex items-center gap-3">
           <div className="w-[84px] h-[26px] rounded-[20px] p-[1px] bg-gradient-to-r from-[#6E07CF] to-[#FFFFFF]">
@@ -71,11 +72,7 @@ const SendHelpCard = ({ amount, status, gpay = true }: SendHelpCardProps) => {
       <ProfilePopup
         isOpen={isProfileOpen}
         onClose={() => setIsProfileOpen(false)}
-        name="PHILOMENA PANAKKAL"
-        email="blessymolinchrist@gmail.com"
-        phone="8078036775"
-        altPhone="8078026775"
-        status="Active"
+        levelId={levelId}  
       />
     </>
   );

@@ -1,4 +1,7 @@
 import { useState, useEffect } from "react";
+import api from "../../../lib/api";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 export interface ReferralData {
   referralLink: string;
@@ -12,12 +15,22 @@ export const useReferral = () => {
   useEffect(() => {
     const fetchReferral = async () => {
       try {
-        await new Promise((resolve) => setTimeout(resolve, 500)); // simulate API delay
-        setReferral({
-          referralLink: "https://lioclubx.com/referral/LX88011",
-        });
-      } catch {
-        setError("Failed to load referral data");
+        setLoading(true);
+        const response = await api.get("/referral/"); 
+        const referralId = response.data.referral_id;
+        const fullLink = `https://lioclubx.com/referral/${referralId}`;
+        setReferral({ referralLink: fullLink });
+      } catch (err : any) {
+       let message = "Failed to load account details";
+        if (axios.isAxiosError(err)) {
+          if (err.response?.data?.error) {
+            message = err.response.data.error;
+          } else if (err.message) {
+            message = err.message;
+          }
+        }
+        setError(message);
+        toast.error(message);
       } finally {
         setLoading(false);
       }

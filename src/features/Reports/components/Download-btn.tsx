@@ -67,7 +67,7 @@ const Downloadbtn: React.FC<DownloadbtnProps> = ({ rowsPerPage, onRowsChange,onC
           }}
         >
           <option  value={1}>Show 1 rows</option>
-          <option  value={2}>Show 2 rows</option>
+          <option  value={5}>Show 5 rows</option>
           <option  value={100}>Show 100 rows</option>
         </select>
       </div>

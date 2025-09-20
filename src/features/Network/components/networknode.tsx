@@ -28,7 +28,6 @@ export default function NetworkNode({ member }: Props) {
         <div className="px-3 py-1 bg-gradient-to-r from-purple-1 to-purple-2 text-white rounded-md text-sm font-medium whitespace-nowrap">
           {member.position ? `${member.position} - ${member.name}` : member.name}
         </div>
-
         <div className="px-2 py-1 bg-black border border-purple-700 rounded text-xs text-gray-300">
           Level {member.level}
         </div>

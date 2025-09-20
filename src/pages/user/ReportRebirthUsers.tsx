@@ -62,6 +62,7 @@ const ReportRebirthUsers = () => {
         <div className="py-8 text-white">
           {/* Dashboard filters */}
           <RebirthUsersDashboard
+          users={users}
             onApply={(values) =>
               setFilters((prev) => ({ ...prev, ...values, offset: 0 }))
             }
@@ -75,15 +76,7 @@ const ReportRebirthUsers = () => {
               {/* Search */}
               <Search
                 onSearch={(text) =>
-                  setFilters((prev) => {
-                    const isEmail = text.includes("@");
-                    return {
-                      ...prev,
-                      email: isEmail ? text : "",
-                      user_id: !isEmail ? text : "",
-                      offset: 0,
-                    };
-                  })
+                  setFilters((prev) => ({ ...prev, user_id: text, offset: 0 }))
                 }
               />
 

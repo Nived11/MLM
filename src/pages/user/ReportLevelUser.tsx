@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Meta from "../../components/custom-ui/Meta";
 import { Toaster } from "sonner";
-import { useLevelUsers } from "../../features/Reports/hooks/levelUsers"; 
+import { useLevelUsers } from "../../features/Reports/hooks/levelUsers";
 import { printUsers } from "../../features/Reports/utils/printdatas";
 import {
   Pagination,
@@ -13,9 +13,8 @@ import {
 
 const ReportLevelUser = () => {
   const [filters, setFilters] = useState({
-    username: "",
+    search: "",
     status: "all",
-    level: "",
     start_date: "",
     end_date: "",
     limit: 10,
@@ -62,6 +61,7 @@ const ReportLevelUser = () => {
         <div className="py-8 text-white">
           {/* Dashboard filters */}
           <LevelUserDashboard
+            users={users}
             onApply={(values) =>
               setFilters((prev) => ({ ...prev, ...values, offset: 0 }))
             }
@@ -75,13 +75,10 @@ const ReportLevelUser = () => {
               {/* Search */}
               <Search
                 onSearch={(text) =>
-                  setFilters((prev) => ({
-                    ...prev,
-                    username: text,
-                    offset: 0,
-                  }))
+                  setFilters((prev) => ({ ...prev, search: text, offset: 0 }))
                 }
               />
+
 
               {/* Download Options */}
               <Downloadbtn

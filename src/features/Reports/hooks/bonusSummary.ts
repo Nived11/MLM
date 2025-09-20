@@ -96,12 +96,12 @@ export const useBonusSummary = (filters: Filters = {}) => {
   };
 
   ////////////////// Copy //////////////////
-  const copyToClipboard = () => {
+  const copyToClipboard = async() => {
     if (!users.length) return toast.error("No data to copy");
 
     const rows = [
       ["ID", "Username", "Invoice"],
-      ...users.map((u) => [String(u.id), u.username, u.invoice]),
+      ...users.map((u) => [String(u.id) || "N/A", u.username  || "N/A", u.invoice || "N/A"]),
     ];
 
     const colWidths = rows[0].map((_, i) => Math.max(...rows.map((r) => r[i].length)));
@@ -109,8 +109,13 @@ export const useBonusSummary = (filters: Filters = {}) => {
       .map((r) => r.map((c, i) => c.padEnd(colWidths[i] + 2)).join(""))
       .join("\n");
 
-    navigator.clipboard.writeText(formatted);
+   try {
+    await navigator.clipboard.writeText(formatted);
     toast.success("Copied to clipboard!");
+  } catch (err) {
+    console.error("Clipboard copy failed:", err);
+    toast.error("Failed to copy to clipboard");
+  }
   };
 
   ////////////////// Print //////////////////

@@ -2,10 +2,10 @@ import { z } from "zod";
 
 export const signupSchema = z
     .object({
-        sponsorId: z.string(),
+        sponsorId: z.string().min(2, "Sponsor ID is required"),
         pincode: z.string().regex(/^\d{6}$/, "Enter a valid 6-digit Pincode"),
         placementId: z.string().min(2, "Placement Id is required"),
-        paymentType: z.enum(["gpay", "phonepe", "paytm"], {
+        paymentType: z.enum(["GPay", "PhonePe", "Paytm"], {
             message: "Select a valid payment type",
         }),
         firstName: z.string().min(2, "First name is required"),

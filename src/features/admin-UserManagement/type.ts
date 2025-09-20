@@ -1,6 +1,7 @@
 export interface UserManagement {
-  id: number;
-  username: string;
+  id?: number;
+  userId: string;
+  username?: string;
   first_name: string;
   last_name: string;
   email: string;
@@ -16,3 +17,23 @@ export interface UserManagement {
   profile_image?: string | File | null;
   [key: string]: any;
 }
+export interface compactUserManagement {
+  id: number;
+  userId: string;
+  username: string;
+  level: string;
+  profile: string | File | null;
+  status: string;
+}
+
+export interface UseEditProfileProps {
+  initialUser: UserManagement;
+  onClose: () => void;
+}
+
+export interface useViewProfileProps {
+  initialUser: UserManagement;
+  onClose: () => void;
+}
+
+

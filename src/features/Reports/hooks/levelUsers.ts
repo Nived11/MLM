@@ -6,9 +6,9 @@ import { extractErrorMessages } from "../../../utils/helpers/extractErrorMessage
 import { toast } from "sonner";
 
 interface Filters {
+  search?: string;
   username?: string;
   status?: string;
-  level?: string;
   start_date?: string;
   end_date?: string;
   limit?: number;
@@ -106,20 +106,20 @@ export const useLevelUsers = (filters: Filters) => {
   };
 
   ////////////////// Copy //////////////////
-  const copyToClipboard = () => {
+  const copyToClipboard = async() => {
     if (!users.length) return toast.error("No data to copy");
 
     const rows = [
       ["Username", "Form Name", "Amount", "Proof", "Status", "Level", "Requested Date", "Total"],
       ...users.map((u) => [
-        u.username,
-        u.fromname,
-        String(u.amount),
-        u.proof,
-        u.status,
-        u.level,
-        u.requesteddate,
-        String(u.total),
+        u.username  || "N/A",
+        u.fromname  || "N/A",
+        String(u.amount)  || "N/A",
+        u.proof || "N/A",
+        u.status  || "N/A",
+        u.level || "N/A",
+        u.requesteddate || "-",
+        String(u.total) || "N/A",
       ]),
     ];
 
@@ -128,8 +128,13 @@ export const useLevelUsers = (filters: Filters) => {
       .map((r) => r.map((c, i) => c.padEnd(colWidths[i] + 2)).join(""))
       .join("\n");
 
-    navigator.clipboard.writeText(formatted);
+    try {
+    await navigator.clipboard.writeText(formatted);
     toast.success("Copied to clipboard!");
+  } catch (err) {
+    console.error("Clipboard copy failed:", err);
+    toast.error("Failed to copy to clipboard");
+  }
   };
 
   ////////////////// Print //////////////////

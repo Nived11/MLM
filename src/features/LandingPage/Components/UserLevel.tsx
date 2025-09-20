@@ -1,23 +1,45 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import dolar from "../../../assets/images/dolar.png";
-interface UserLevel {
-    id: number;
-    level: number;
-    receive: string;
+import axios from "axios";
+
+export const baseURL = import.meta.env.VITE_API_URL || "";
+interface UserLevelData {
+    level_name: string;
     target: string;
+    received: string;
     balance: string;
-    progress: number;
+    received_percent: number;
+    balance_percent: number;
 }
 
 const UserLevel: React.FC = () => {
-    const userLevels: UserLevel[] = [
-        { id: 1, level: 1, receive: '0', target: '200', balance: '200', progress: 0 },
-        { id: 2, level: 2, receive: '0', target: '800', balance: '800', progress: 0 },
-        { id: 3, level: 3, receive: '0', target: '3200', balance: '3200', progress: 0 },
-        { id: 4, level: 4, receive: '0', target: '16000', balance: '16000', progress: 0 },
-        { id: 5, level: 5, receive: '0', target: '64000', balance: '64000', progress: 0 },
-        { id: 6, level: 6, receive: '0', target: '320000', balance: '320000', progress: 0 },
-    ];
+
+    const [userLevels, setUserLevels] = useState<UserLevelData[]>([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    useEffect(() => {
+        const fetchLevels = async () => {
+            setLoading(true);
+            try {
+                const token = localStorage.getItem("accessToken");
+
+                const res = await axios.get(`${baseURL}/user-levels/financial/`, {
+                    headers: {
+                        Authorization: token ? `Bearer ${token}` : undefined,
+                    },
+                });
+                setUserLevels(res.data);
+            } catch (err: any) {
+                setError("Failed to fetch user levels");
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchLevels();
+    }, []);
+
+    if (loading) return <div className="text-white">Loading...</div>;
+    if (error) return <div className="text-red-500">{error}</div>;
 
     return (
         <div className="w-full max-w-8xl">
@@ -25,9 +47,9 @@ const UserLevel: React.FC = () => {
                 className="flex space-x-6 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-hide"
                 style={{ WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none', msOverflowStyle: 'none' }}
             >
-                {userLevels.map((user) => (
+                {userLevels.map((user, idx) => (
                     <div
-                        key={user.id}
+                        key={idx}
                         className="flex-shrink-0 bg-gradient-to-br to-blue-2 from-blue-1 rounded-2xl sm:rounded-3xl p-4 sm:p-8 pb-3 sm:pb-5 pt-4 sm:pt-7 relative shadow-lg snap-center w-[220px] sm:w-[260px] md:w-[320px] lg:w-1/3 min-w-[220px] sm:min-w-[260px] md:min-w-[320px] max-w-[340px]"
                     >
                         <style>{`.scrollbar-hide::-webkit-scrollbar { display: none; }`}</style>
@@ -51,22 +73,22 @@ const UserLevel: React.FC = () => {
                             </svg>
 
                             <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-white flex flex-col items-center justify-center shadow-lg relative" style={{ boxShadow: '0 7px 6px 5px #3A287D , 0 0 0 0 #fff' }}>
-                                <span className="text-lg sm:text-xl font-semibold text-black leading-none">{user.level}</span>
+                                <span className="text-lg sm:text-xl font-semibold text-black leading-none">{idx + 1}</span>
                                 <span className="text-black text-[10px] sm:text-xs font-normal tracking-widest mt-1">LEVEL</span>
                             </div>
                         </div>
                         <div className="grid grid-cols-3 gap-4 sm:gap-8 lg:gap-15 mb-4 sm:mb-6">
                             <div className="flex flex-col items-start">
                                 <span className="text-purple-200 text-xs sm:text-sm lg:text-lg  font-normal mt-1 mb-2">Receive</span>
-                                <span className="text-white text-base sm:text-lg font-bold">{user.receive}</span>
+                                <span className="text-white text-base sm:text-lg font-bold">{user.received.split('.')[0]}</span>
                             </div>
                             <div className="flex flex-col items-start">
                                 <span className="text-purple-200 text-xs sm:text-sm lg:text-lg font-normal mt-1 mb-2">Target</span>
-                                <span className="text-white text-base sm:text-lg font-bold">{user.target}</span>
+                                <span className="text-white text-base sm:text-lg font-bold">{user.target.split('.')[0]}</span>
                             </div>
                             <div className="flex flex-col items-start">
                                 <span className="text-purple-200 text-xs sm:text-sm lg:text-lg  font-normal mt-1 mb-2">Balance</span>
-                                <span className="text-white text-base sm:text-lg font-bold">{user.balance}</span>
+                                <span className="text-white text-base sm:text-lg font-bold">{user.balance.split('.')[0]}</span>
                             </div>
                         </div>
                         <div className="mb-2 sm:mb-4 space-y-4 sm:space-y-7 overflow-hidden max-w-full">
@@ -78,17 +100,17 @@ const UserLevel: React.FC = () => {
                                 <div className="flex items-center space-x-2 sm:space-x-4">
                                     <span className="w-2 h-2 sm:w-3 sm:h-3 rounded-full inline-block" style={{ background: 'linear-gradient(90deg, #8b35dbff 0%, #FED934 100%)' }}></span>
                                     <span className="text-white font-normal w-10 sm:w-15">Target</span>
-                                    <span className="text-white font-normal ml-1 sm:ml-2">100.0%</span>
+                                    <span className="text-white font-normal ml-1 sm:ml-2">100%</span>
                                 </div>
                                 <div className="flex items-center space-x-2 sm:space-x-4">
                                     <span className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-gradient-to-r from-purple-500 to-gray-400 inline-block"></span>
                                     <span className="text-white font-normal w-10 sm:w-15">Receive</span>
-                                    <span className="text-white font-normal ml-1 sm:ml-2">0.0%</span>
+                                    <span className="text-white font-normal ml-1 sm:ml-2">{user.received_percent}%</span>
                                 </div>
                                 <div className="flex items-center space-x-2 sm:space-x-4">
                                     <span className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-yellow-400 inline-block"></span>
                                     <span className="text-white font-normal w-10 sm:w-15">Balance</span>
-                                    <span className="text-white font-normal ml-1 sm:ml-2">100.0%</span>
+                                    <span className="text-white font-normal ml-1 sm:ml-2">{user.balance_percent}%</span>
                                 </div>
                             </div>
                             <div className="flex-1 flex justify-end">

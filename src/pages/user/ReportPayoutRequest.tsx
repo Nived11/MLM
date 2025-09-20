@@ -13,8 +13,7 @@ import {
 
 const ReportPayoutRequest = () => {
   const [filters, setFilters] = useState({
-    fromuser: "",
-    username: "",
+    search: "",
     status: "all",
     start_date: "",
     end_date: "",
@@ -62,7 +61,9 @@ const ReportPayoutRequest = () => {
         <div className="py-8 text-white">
           {/* Dashboard filters */}
           <PayoutRequestDashboard
-            onApply={(values) => setFilters((prev) => ({ ...prev, ...values, offset: 0 }))}
+            onApply={(values) =>
+              setFilters((prev) => ({ ...prev, ...values, offset: 0 }))
+            }
           />
 
           {/* Table Section */}
@@ -73,7 +74,7 @@ const ReportPayoutRequest = () => {
               {/* Search */}
               <Search
                 onSearch={(text) =>
-                  setFilters((prev) => ({ ...prev, username: text, offset: 0 }))
+                  setFilters((prev) => ({ ...prev, search: text, offset: 0 }))
                 }
               />
 
@@ -91,7 +92,11 @@ const ReportPayoutRequest = () => {
               />
 
               {/* Table */}
-              <PayoutRequestTable users={users} isLoading={isLoading} error={error} />
+              <PayoutRequestTable
+                users={users}
+                isLoading={isLoading}
+                error={error}
+              />
 
               {/* Pagination */}
               <Pagination
@@ -99,7 +104,10 @@ const ReportPayoutRequest = () => {
                 totalCount={totalCount}
                 rowsPerPage={filters.limit}
                 onPageChange={(page) =>
-                  setFilters((prev) => ({ ...prev, offset: (page - 1) * prev.limit }))
+                  setFilters((prev) => ({
+                    ...prev,
+                    offset: (page - 1) * prev.limit,
+                  }))
                 }
               />
             </div>

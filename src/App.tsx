@@ -8,7 +8,7 @@ function App() {
     <Provider store={store}>
       <BrowserRouter>
         <AppRoutes />
-      </BrowserRouter>
+      </BrowserRouter> 
     </Provider>
   );
 }
