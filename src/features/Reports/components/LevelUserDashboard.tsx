@@ -16,7 +16,7 @@ const LevelUserDashboard = ({ users,onApply }: Props) => {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [fromUser, setFromUser] = useState("");
-  const [status, setStatus] = useState("All");
+  const [status, setStatus] = useState("all");
 
   const uniqueUsernames = useMemo(() => {
     return Array.from(new Set(users.map((u) => u.username).filter(Boolean)));
@@ -35,8 +35,8 @@ const LevelUserDashboard = ({ users,onApply }: Props) => {
     setStartDate("");
     setEndDate("");
     setFromUser("");
-    setStatus("All");
-    onApply({ start_date: "", end_date: "", search: "", status: "All" });
+    setStatus("all");
+    onApply({ start_date: "", end_date: "", search: "", status: "all" });
   };
 
   return (
@@ -113,7 +113,7 @@ const LevelUserDashboard = ({ users,onApply }: Props) => {
                       backgroundSize: "30px",
                     }}
                   >
-                    <option value="All">All</option>
+                    <option value="all">All</option>
                     <option value="Completed">Completed</option>
                     <option value="Pending">Pending</option>
                   </select>

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { SlidersHorizontal } from "lucide-react";
 
 interface Props {
-  onApply: (filters: { start_date: string; end_date: string; status: string }) => void;
+  onApply: (filters: { from_date: string; end_date: string; status: string }) => void;
 }
 
 const UserJoiningDashboard = ({ onApply }: Props) => {
@@ -12,12 +12,12 @@ const UserJoiningDashboard = ({ onApply }: Props) => {
   const [status, setStatus] = useState("all");
 
   const handleApply = () => {
-    onApply({ start_date: startDate, end_date: endDate, status });
+    onApply({ from_date: startDate, end_date: endDate, status });
   };
 
   const handleReset = () => {
     setStartDate(""); setEndDate(""); setStatus("all");
-    onApply({ start_date: "", end_date: "", status: "all" });
+    onApply({ from_date: "", end_date: "", status: "all" });
   };
 
   return (

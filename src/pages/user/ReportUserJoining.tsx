@@ -9,7 +9,7 @@ const ReportUserJoining = () => {
   const [filters, setFilters] = useState({
     email: "",
     user_id: "",
-    start_date: "",
+    from_date: "",
     end_date: "",
     status: "all",
     limit: 10,

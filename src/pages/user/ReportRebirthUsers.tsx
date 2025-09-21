@@ -15,7 +15,10 @@ const ReportRebirthUsers = () => {
   const [filters, setFilters] = useState({
     email: "",
     user_id: "",
-    start_date: "",
+    referred_by_name: "",
+    referred_by_id: "",
+    mobile: "",
+    from_date: "",
     end_date: "",
     status: "all",
     limit: 10,
@@ -24,6 +27,7 @@ const ReportRebirthUsers = () => {
 
   const {
     users,
+    alluser,
     isLoading,
     error,
     totalCount,
@@ -62,7 +66,7 @@ const ReportRebirthUsers = () => {
         <div className="py-8 text-white">
           {/* Dashboard filters */}
           <RebirthUsersDashboard
-          users={users}
+          users={alluser}
             onApply={(values) =>
               setFilters((prev) => ({ ...prev, ...values, offset: 0 }))
             }

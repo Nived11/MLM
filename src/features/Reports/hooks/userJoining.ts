@@ -8,7 +8,7 @@ import { toast } from "sonner";
 interface Filters {
   email?: string;
   user_id?: string;
-  start_date?: string;
+  from_date?: string;
   end_date?: string;
   status?: string;
   limit?: number;

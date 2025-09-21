@@ -7,7 +7,7 @@ import { toast } from "sonner";
 
 interface Filters {
   search?: string;
-  username?: string;
+  // username?: string;
   status?: string;
   start_date?: string;
   end_date?: string;
@@ -17,15 +17,21 @@ interface Filters {
 
 export const useLevelUsers = (filters: Filters) => {
   const [users, setUsers] = useState<LevelUsers[]>([]);
+  const [allusers, setAllusers] = useState<LevelUsers[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [totalCount, setTotalCount] = useState<number>(0);
 
   ////////////////// Build query string //////////////////
-  const buildQuery = () => {
+   const buildQuery = () => {
     return new URLSearchParams(
       Object.entries(filters).reduce((acc, [k, v]) => {
+        // skip empty/undefined/null
         if (v !== "" && v !== undefined && v !== null) {
+          // skip status when it's "all" (treat "all" as "no status filter")
+          if (k === "status" && String(v).toLowerCase() === "all") {
+            return acc;
+          }
           acc[k] = String(v);
         }
         return acc;
@@ -65,6 +71,25 @@ export const useLevelUsers = (filters: Filters) => {
       setIsLoading(false);
     }
   };
+  const fetchAllUsers = async () => {
+      const res = await api.get(`/level-users-report/`);
+      const response = res.data;
+      const rawData = Array.isArray(response) ? response : response.data || [];
+      const mapped: LevelUsers[] = rawData.map((r: any) => ({
+        username: r.username,
+        fromname: r.from_name,
+        amount: r.amount,
+        proof: r.proof,
+        status: r.status,
+        level: r.level,
+        requesteddate: formatDate(r.requested_date),
+        total: r.total,
+      }));
+      setAllusers(mapped);
+  };
+    useEffect(() => {
+    fetchAllUsers();
+  }, []);
 
   ////////////////// Exports //////////////////
   const exportPDF = async () => {
@@ -164,6 +189,7 @@ export const useLevelUsers = (filters: Filters) => {
 
   return {
     users,
+    allusers,
     isLoading,
     error,
     totalCount,

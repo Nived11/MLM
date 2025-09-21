@@ -21,17 +21,20 @@ const ReportLevelUser = () => {
     offset: 0,
   });
 
-  const {
-    users,
-    isLoading,
-    error,
-    totalCount,
-    exportPDF,
-    exportExcel,
-    exportCSV,
-    copyToClipboard,
-    getPrintData,
-  } = useLevelUsers(filters);
+ const {
+  users,
+  allusers,
+  isLoading,
+  error,
+  totalCount,
+  exportPDF,
+  exportExcel,
+  exportCSV,
+  copyToClipboard,
+  getPrintData,
+} = useLevelUsers(filters);
+
+
 
   return (
     <>
@@ -61,7 +64,7 @@ const ReportLevelUser = () => {
         <div className="py-8 text-white">
           {/* Dashboard filters */}
           <LevelUserDashboard
-            users={users}
+            users={allusers}
             onApply={(values) =>
               setFilters((prev) => ({ ...prev, ...values, offset: 0 }))
             }

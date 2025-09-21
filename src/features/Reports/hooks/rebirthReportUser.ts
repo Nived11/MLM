@@ -8,7 +8,10 @@ import { toast } from "sonner";
 interface Filters {
   email?: string;
   user_id?: string;
-  start_date?: string;
+  referred_by_name?: string;
+  referred_by_id?: string;
+  mobile?: string;
+  from_date?: string;
   end_date?: string;
   status?: string;
   limit?: number;
@@ -17,6 +20,7 @@ interface Filters {
 
 export const useRebirthReportusers = (filters: Filters) => {
   const [users, setUsers] = useState<RebirthUsers[]>([]);
+  const [alluser, setAlluser] = useState<RebirthUsers[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [totalCount, setTotalCount] = useState<number>(0);
@@ -33,11 +37,13 @@ export const useRebirthReportusers = (filters: Filters) => {
     ).toString();
   };
 
-  ////////////////// Fetch Users //////////////////
+  ////////////////// Fetch Filtered Users //////////////////
   const fetchUsers = async () => {
     try {
+      
       setIsLoading(true);
       setError(null);
+      
 
       const query = buildQuery();
       console.log("query", query);
@@ -72,6 +78,29 @@ export const useRebirthReportusers = (filters: Filters) => {
       setIsLoading(false);
     }
   };
+  ////////////////// Fetch All Users //////////////////
+
+
+  const fetchAllUsers = async () => {
+      const res = await api.get(`/referrals/list/`);
+      const response = res.data;
+      const rawData = Array.isArray(response) ? response : response.data || [];
+      const mapped: RebirthUsers[] = rawData.map((r: any) => ({
+        username: r.user_id,
+        fullname: `${r.first_name} ${r.last_name}`,
+        sponsorid: r.referred_by_id,
+        sponsorname: r.referred_by_name,
+        placementid: r.position,
+        email: r.email,
+        mobile: r.mobile,
+        dateofjoining: formatDate(r.joined_date),
+        status: r.status,
+      }));
+      setAlluser(mapped);
+  };
+    useEffect(() => {
+    fetchAllUsers();
+  }, []);
 
   ////////////////// Exports //////////////////
   const exportPDF = async () => {
@@ -116,7 +145,7 @@ export const useRebirthReportusers = (filters: Filters) => {
     if (!users.length) return toast.error("No data to copy");
 
     const rows = [
-      ["Username", "Fullname", "Sponsor", "PlacementID", "Email", "Mobile", "DateOfJoining", "Status"],
+      ["Username", "Fullname", "SponsorName", "PlacementID", "Email", "Mobile", "DateOfJoining", "Status"],
       ...users.map((u) => [
         u.username  || "N/A",
         u.fullname  || "N/A",
@@ -150,7 +179,7 @@ export const useRebirthReportusers = (filters: Filters) => {
       return null;
     }
     return [
-      ["Username", "Fullname", "Sponsor", "PlacementID", "Email", "Mobile", "DateOfJoining", "Status"],
+      ["Username", "Fullname", "SponsorName", "PlacementID", "Email", "Mobile", "DateOfJoining", "Status"],
       ...users.map((u) => [
         u.username,
         u.fullname,
@@ -170,6 +199,7 @@ export const useRebirthReportusers = (filters: Filters) => {
 
   return {
     users,
+    alluser,
     isLoading,
     error,
     totalCount,
