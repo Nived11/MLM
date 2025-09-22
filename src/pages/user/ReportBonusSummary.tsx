@@ -3,18 +3,13 @@ import Meta from "../../components/custom-ui/Meta";
 import { Toaster } from "sonner";
 import { useBonusSummary } from "../../features/Reports/hooks/bonusSummary";
 import { printUsers } from "../../features/Reports/utils/printdatas";
-import {
-  Pagination,
-  BonusSumDashboard,
-  Search,
-  Downloadbtn,
-  BonusSummaryTable,
-} from "../../features/Reports";
+import { Pagination, BonusSumDashboard, Search, Downloadbtn, BonusSummaryTable,} from "../../features/Reports";
 
 const ReportBonusSummary = () => {
   const [filters, setFilters] = useState({
-    username: "",
-    invoice: "",
+    search: "",
+    from_date: "",
+    end_date: "",
     limit: 10,
     offset: 0,
   });
@@ -24,11 +19,14 @@ const ReportBonusSummary = () => {
     isLoading,
     error,
     totalCount,
+    next,
+    previous,
     exportPDF,
     exportExcel,
     exportCSV,
     copyToClipboard,
     getPrintData,
+    handleInvoicePDF,
   } = useBonusSummary(filters);
 
   return (
@@ -66,7 +64,7 @@ const ReportBonusSummary = () => {
               <h2 className="text-lg font-semibold mb-4">Bonus Summary</h2>
 
               <Search
-                onSearch={(text) => setFilters((prev) => ({ ...prev, username: text, offset: 0 }))}
+                onSearch={(text) => setFilters((prev) => ({ ...prev, search: text, offset: 0 }))}
               />
 
               <Downloadbtn
@@ -79,15 +77,43 @@ const ReportBonusSummary = () => {
                 onPrint={() => printUsers(getPrintData())}
               />
 
-              <BonusSummaryTable users={users} isLoading={isLoading} error={error} />
+              <BonusSummaryTable
+                users={users}
+                isLoading={isLoading}
+                error={error}
+                onInvoicePDF={handleInvoicePDF} 
+              />
 
               <Pagination
                 currentPage={filters.offset / filters.limit + 1}
                 totalCount={totalCount}
                 rowsPerPage={filters.limit}
-                onPageChange={(page) =>
-                  setFilters((prev) => ({ ...prev, offset: (page - 1) * prev.limit }))
-                }
+                next={next}
+                previous={previous}
+                onPageChange={(page, type, url) => {
+                  if (type === "first") {
+                    setFilters((prev) => ({ ...prev, offset: 0 }));
+                  } else if (type === "last") {
+                    const lastOffset =
+                      (Math.ceil(totalCount / filters.limit) - 1) *
+                      filters.limit;
+                    setFilters((prev) => ({ ...prev, offset: lastOffset }));
+                  } else if (url) {
+                    // backend full URL, extract offset & limit
+                    const params = new URL(url).searchParams;
+                    const offset = parseInt(params.get("offset") || "0", 10);
+                    const limit = parseInt(
+                      params.get("limit") || String(filters.limit),
+                      10
+                    );
+                    setFilters((prev) => ({ ...prev, offset, limit }));
+                  } else {
+                    setFilters((prev) => ({
+                      ...prev,
+                      offset: (page - 1) * prev.limit,
+                    }));
+                  }
+                }}
               />
             </div>
           </div>

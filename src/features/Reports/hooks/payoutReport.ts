@@ -19,6 +19,13 @@ export const usePayoutReport = (filters: Filters) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [totalCount, setTotalCount] = useState<number>(0);
+  const [pagination, setPagination] = useState<{
+    next: string | null;
+    previous: string | null;
+  }>({
+    next: null,
+    previous: null,
+  });
 
   ////////////////// Build query string //////////////////
   const buildQuery = () => {
@@ -42,8 +49,8 @@ export const usePayoutReport = (filters: Filters) => {
       const res = await api.get(`/payment-report/${query ? `?${query}` : ""}`);
       const response = res.data;
 
-      const rawData = Array.isArray(response) ? response : response.data || [];
-      const total = Array.isArray(response) ? response.length : response.total || 0;
+      const rawData = response.results || [];
+      const total = response.count || 0;
 
       const mapped: PayoutReport[] = rawData.map((r: any) => ({
         username: r.username,
@@ -51,12 +58,16 @@ export const usePayoutReport = (filters: Filters) => {
         status: r.status,
         payoutamount: Number(r.payout_amount),
         transactionfee: Number(r.transaction_fee),
-        requesteddate: formatDate(r.requested_at || r.approved_at || r.requesteddate),
+        requesteddate: formatDate(r.requested_date),
         total: Number(r.total),
       }));
 
       setUsers(mapped);
       setTotalCount(total);
+      setPagination({
+        next: response.next,
+        previous: response.previous,
+      });
     } catch (err) {
       setError(extractErrorMessages(err) || "Could not fetch Payout Report");
     } finally {
@@ -104,19 +115,19 @@ export const usePayoutReport = (filters: Filters) => {
   };
 
   ////////////////// Copy //////////////////
-  const copyToClipboard = async() => {
+  const copyToClipboard = async () => {
     if (!users.length) return toast.error("No data to copy");
 
     const rows = [
       ["Username", "Amount", "Status", "Payout Amount", "Transaction Fee", "Requested Date", "Total"],
       ...users.map((u) => [
-        u.username  || "N/A",
+        u.username || "N/A",
         u.amount.toFixed(2) || "N/A",
-        u.status  || "N/A",
+        u.status || "N/A",
         u.payoutamount.toFixed(2) || "N/A",
         u.transactionfee.toFixed(2) || "N/A",
         u.requesteddate || "N/A",
-        u.total.toFixed(2)  || "N/A",
+        u.total.toFixed(2) || "N/A",
       ]),
     ];
 
@@ -126,12 +137,12 @@ export const usePayoutReport = (filters: Filters) => {
       .join("\n");
 
     try {
-    await navigator.clipboard.writeText(formatted);
-    toast.success("Copied to clipboard!");
-  } catch (err) {
-    console.error("Clipboard copy failed:", err);
-    toast.error("Failed to copy to clipboard");
-  }
+      await navigator.clipboard.writeText(formatted);
+      toast.success("Copied to clipboard!");
+    } catch (err) {
+      console.error("Clipboard copy failed:", err);
+      toast.error("Failed to copy to clipboard");
+    }
   };
 
   ////////////////// Print //////////////////
@@ -163,6 +174,8 @@ export const usePayoutReport = (filters: Filters) => {
     isLoading,
     error,
     totalCount,
+    next: pagination.next,
+    previous: pagination.previous,
     exportPDF,
     exportExcel,
     exportCSV,

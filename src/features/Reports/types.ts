@@ -1,4 +1,5 @@
 export interface AucReport {
+  username: string;
   fromuser: string;
   amount: number;
   status: string;
@@ -13,6 +14,7 @@ export interface BonusSummary {
 export interface LevelUsers {
   username: string;
   fromname: string;
+  fromuser: string;
   amount: number;
   proof: string;
   status: string;

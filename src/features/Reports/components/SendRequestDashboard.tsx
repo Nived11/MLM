@@ -5,7 +5,7 @@ interface Props {
   onApply: (filters: { start_date: string; end_date: string; status: string }) => void;
 }
 
-const SendRequestDashboard  = ({ onApply }: Props) => {
+const SendRequestDashboard = ({ onApply }: Props) => {
   const [showDashboard, setShowDashboard] = useState(true);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -45,7 +45,7 @@ const SendRequestDashboard  = ({ onApply }: Props) => {
                 <div className="rounded-md p-[1px] w-full max-w-xs lg:max-w-65 bg-gradient-to-r from-[var(--purple-1)] to-[var(--purple-2)]">
                   <input
                     type="date"
-                     value={endDate}
+                    value={endDate}
                     onChange={(e) => setEndDate(e.target.value)}
                     className="w-full bg-black rounded-md px-3 py-2 focus:outline-none"
                   />
@@ -56,7 +56,7 @@ const SendRequestDashboard  = ({ onApply }: Props) => {
                 <label className="block mb-2 text-sm">Status :</label>
                 <div className="p-[1px] rounded-md bg-gradient-to-r from-[var(--purple-1)] to-[var(--purple-2)] max-w-xs lg:max-w-50">
                   <select
-                  value={status}
+                    value={status}
                     onChange={(e) => setStatus(e.target.value)}
                     className="w-full bg-black rounded-md px-5 py-2 pr-8 text-white text-sm cursor-pointer focus:outline-none appearance-none"
                     style={{
@@ -75,14 +75,14 @@ const SendRequestDashboard  = ({ onApply }: Props) => {
             </div>
 
             <div className="flex flex-wrap sm:flex-row gap-3 sm:gap-4 mt-6 sm:mt-10">
-              <button 
-              onClick={handleApply}
-              className="bg-gradient-to-r from-[var(--purple-1)] to-[var(--purple-2)] px-4 py-1 text-sm sm:text-base rounded-lg hover:opacity-90 w-auto">
+              <button
+                onClick={handleApply}
+                className="bg-gradient-to-r from-[var(--purple-1)] to-[var(--purple-2)] px-4 py-1 text-sm sm:text-base rounded-lg hover:opacity-90 w-auto">
                 Apply
               </button>
-              <button 
-              onClick={handleReset}
-              className="bg-blue-600  px-4 py-1 text-sm sm:text-base rounded-lg hover:bg-blue-800  w-auto">
+              <button
+                onClick={handleReset}
+                className="bg-blue-600  px-4 py-1 text-sm sm:text-base rounded-lg hover:bg-blue-800  w-auto">
                 Reset
               </button>
               <button

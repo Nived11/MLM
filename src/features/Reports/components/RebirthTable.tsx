@@ -70,7 +70,7 @@ const RebirthTable = ({ users, isLoading, error }: Props) => {
                 <td className="px-4 py-3">{user.username}</td>
                 <td className="px-2 py-3">{user.fullname}</td>
                 <td className="px-2 py-3">{user.sponsorid}</td>
-                <td className="px-2 py-3">{user.placementid}</td>
+                <td className="px-2 py-3">{user.placementid} </td>
                 <td className="px-2 py-3 whitespace-nowrap">
                   {user.email}
                 </td>

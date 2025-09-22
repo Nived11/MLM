@@ -1,17 +1,21 @@
 import { useState, useMemo } from "react";
 import { SlidersHorizontal } from "lucide-react";
+import SearchableDropdown from "./SearchableDropdown";
 import type { LevelUsers } from "../types";
 
 interface Props {
   users: LevelUsers[];
+  isLoading?: boolean;
+  error?: string | null;
   onApply: (filters: {
+    from_user: string;
     start_date: string;
     end_date: string;
-    search: string;
     status: string;
   }) => void;
 }
-const LevelUserDashboard = ({ users,onApply }: Props) => {
+
+const LevelUserDashboard = ({ users, isLoading, error, onApply }: Props) => {
   const [showDashboard, setShowDashboard] = useState(true);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -19,14 +23,21 @@ const LevelUserDashboard = ({ users,onApply }: Props) => {
   const [status, setStatus] = useState("all");
 
   const uniqueUsernames = useMemo(() => {
-    return Array.from(new Set(users.map((u) => u.username).filter(Boolean)));
+    return Array.from(new Set(users.map((u) => u.fromuser).filter(Boolean)));
   }, [users]);
+
+  const dropdownStyle = {
+    backgroundImage: `url("data:image/svg+xml;utf8,<svg fill='white' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>")`,
+    backgroundRepeat: "no-repeat" as const,
+    backgroundPosition: "calc(100% - 10px) center",
+    backgroundSize: "30px",
+  };
 
   const handleApply = () => {
     onApply({
       start_date: startDate,
       end_date: endDate,
-      search: fromUser,
+      from_user: fromUser,
       status,
     });
   };
@@ -36,7 +47,9 @@ const LevelUserDashboard = ({ users,onApply }: Props) => {
     setEndDate("");
     setFromUser("");
     setStatus("all");
-    onApply({ start_date: "", end_date: "", search: "", status: "all" });
+    onApply({
+      start_date: "", end_date: "", from_user: "", status: "all",
+    });
   };
 
   return (
@@ -48,7 +61,6 @@ const LevelUserDashboard = ({ users,onApply }: Props) => {
               Report Dashboard
             </h2>
 
-            {/* Filters */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <div>
                 <label className="block mb-2 text-sm">From Date :</label>
@@ -77,25 +89,16 @@ const LevelUserDashboard = ({ users,onApply }: Props) => {
               <div>
                 <label className="block mb-2 text-sm">From User :</label>
                 <div className="p-[1px] rounded-md bg-gradient-to-r from-[var(--purple-1)] to-[var(--purple-2)] max-w-xs lg:max-w-50">
-                  <select
-                      value={fromUser}
+                  <SearchableDropdown
+                    value={fromUser}
                     onChange={(e) => setFromUser(e.target.value)}
+                    options={uniqueUsernames}
+                    placeholder="Select User"
                     className="w-full bg-black rounded-md px-5 py-2 pr-8 text-white text-sm cursor-pointer focus:outline-none appearance-none"
-                    style={{
-                      backgroundImage: `url("data:image/svg+xml;utf8,<svg fill='white' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>")`,
-                      backgroundRepeat: "no-repeat",
-                      backgroundPosition: "calc(100% - 10px) center",
-                      backgroundSize: "30px",
-                    }}
-                  >
-                    <option value="">Select a user</option>
-                    <option value="121212">1111 a user</option>
-                    {uniqueUsernames.map((name) => (
-                      <option key={name} value={name}>
-                        {name}
-                      </option>
-                    ))}
-                  </select>
+                    style={dropdownStyle}
+                    isLoading={isLoading}
+                    error={error}
+                  />
                 </div>
               </div>
 
@@ -106,12 +109,7 @@ const LevelUserDashboard = ({ users,onApply }: Props) => {
                     value={status}
                     onChange={(e) => setStatus(e.target.value)}
                     className="w-full bg-black rounded-md px-5 py-2 pr-8 text-white text-sm cursor-pointer focus:outline-none appearance-none"
-                    style={{
-                      backgroundImage: `url("data:image/svg+xml;utf8,<svg fill='white' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>")`,
-                      backgroundRepeat: "no-repeat",
-                      backgroundPosition: "calc(100% - 10px) center",
-                      backgroundSize: "30px",
-                    }}
+                    style={dropdownStyle}
                   >
                     <option value="all">All</option>
                     <option value="Completed">Completed</option>

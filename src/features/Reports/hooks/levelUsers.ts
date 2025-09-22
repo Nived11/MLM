@@ -7,7 +7,7 @@ import { toast } from "sonner";
 
 interface Filters {
   search?: string;
-  // username?: string;
+  from_user?: string;
   status?: string;
   start_date?: string;
   end_date?: string;
@@ -19,16 +19,23 @@ export const useLevelUsers = (filters: Filters) => {
   const [users, setUsers] = useState<LevelUsers[]>([]);
   const [allusers, setAllusers] = useState<LevelUsers[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoadingAll, setIsLoadingAll] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [allerror, setAllError] = useState<string | null>(null);
   const [totalCount, setTotalCount] = useState<number>(0);
+  const [pagination, setPagination] = useState<{
+    next: string | null;
+    previous: string | null;
+  }>({
+    next: null,
+    previous: null,
+  });
 
   ////////////////// Build query string //////////////////
    const buildQuery = () => {
     return new URLSearchParams(
       Object.entries(filters).reduce((acc, [k, v]) => {
-        // skip empty/undefined/null
         if (v !== "" && v !== undefined && v !== null) {
-          // skip status when it's "all" (treat "all" as "no status filter")
           if (k === "status" && String(v).toLowerCase() === "all") {
             return acc;
           }
@@ -49,14 +56,13 @@ export const useLevelUsers = (filters: Filters) => {
       const res = await api.get(`/level-users-report/${query ? `?${query}` : ""}`);
       const response = res.data;
 
-      const rawData = Array.isArray(response) ? response : response.data || [];
-      const total = Array.isArray(response) ? response.length : response.total || 0;
-
+       const rawData = response.results || [];
+      const total = response.count || 0;
       const mapped: LevelUsers[] = rawData.map((r: any) => ({
         username: r.username,
-        fromname: r.from_name,
+        fromuser: r.from_user, 
         amount: r.amount,
-        proof: r.proof,
+        proof: r.payment_method,
         status: r.status,
         level: r.level,
         requesteddate: formatDate(r.requested_date),
@@ -65,29 +71,45 @@ export const useLevelUsers = (filters: Filters) => {
 
       setUsers(mapped);
       setTotalCount(total);
+      setPagination({
+        next: response.next,
+        previous: response.previous,
+      });
     } catch (err) {
       setError(extractErrorMessages(err) || "Could not fetch Level Users report");
     } finally {
       setIsLoading(false);
     }
   };
+  
   const fetchAllUsers = async () => {
+    try {
+      setIsLoadingAll(true);
+      setAllError(null);
       const res = await api.get(`/level-users-report/`);
       const response = res.data;
-      const rawData = Array.isArray(response) ? response : response.data || [];
+      const rawData = response.results || []; 
+
       const mapped: LevelUsers[] = rawData.map((r: any) => ({
         username: r.username,
-        fromname: r.from_name,
+        fromuser: r.from_user,
         amount: r.amount,
-        proof: r.proof,
+        proof: r.payment_method, 
         status: r.status,
         level: r.level,
         requesteddate: formatDate(r.requested_date),
         total: r.total,
       }));
+      
       setAllusers(mapped);
+    } catch (err) {
+      setAllError(extractErrorMessages(err) || "something went wrong");
+    } finally {
+      setIsLoadingAll(false);
+    }
   };
-    useEffect(() => {
+
+  useEffect(() => {
     fetchAllUsers();
   }, []);
 
@@ -135,10 +157,10 @@ export const useLevelUsers = (filters: Filters) => {
     if (!users.length) return toast.error("No data to copy");
 
     const rows = [
-      ["Username", "Form Name", "Amount", "Proof", "Status", "Level", "Requested Date", "Total"],
+      ["Username", "From User", "Amount", "Proof", "Status", "Level", "Requested Date", "Total"],
       ...users.map((u) => [
         u.username  || "N/A",
-        u.fromname  || "N/A",
+        u.fromuser  || "N/A", 
         String(u.amount)  || "N/A",
         u.proof || "N/A",
         u.status  || "N/A",
@@ -169,10 +191,10 @@ export const useLevelUsers = (filters: Filters) => {
       return null;
     }
     return [
-      ["Username", "Form Name", "Amount", "Proof", "Status", "Level", "Requested Date", "Total"],
+      ["Username", "From User", "Amount", "Proof", "Status", "Level", "Requested Date", "Total"],
       ...users.map((u) => [
         u.username,
-        u.fromname,
+        u.fromuser,
         String(u.amount),
         u.proof,
         u.status,
@@ -191,8 +213,12 @@ export const useLevelUsers = (filters: Filters) => {
     users,
     allusers,
     isLoading,
+    isLoadingAll,
     error,
+    allerror,
     totalCount,
+    next: pagination.next,
+    previous: pagination.previous,
     exportPDF,
     exportExcel,
     exportCSV,

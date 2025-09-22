@@ -6,10 +6,16 @@ interface Props {
   users: BonusSummary[];
   isLoading: boolean;
   error: string | null;
+  onInvoicePDF: (id: number, type: "download" | "view") => void;
 }
 
-const BonusSummaryTable = ({ users, isLoading, error }: Props) => {
 
+const BonusSummaryTable = ({
+  users,
+  isLoading,
+  error,
+  onInvoicePDF,
+}: Props) => {
   return (
     <div className="overflow-x-auto rounded-md border-[1px] border-transparent p-[1px] bg-gradient-to-r from-[var(--purple-1)] to-[var(--purple-2)] ">
       <table className="w-full  text-xs sm:text-sm text-white bg-black rounded-md min-w-0  sm:min-w-0">
@@ -29,10 +35,7 @@ const BonusSummaryTable = ({ users, isLoading, error }: Props) => {
             <SkeletonTable rows={5} columns={3} />
           ) : error ? (
             <tr>
-              <td
-                colSpan={8}
-                className="text-center py-4 text-red-500"
-              >
+              <td colSpan={8} className="text-center py-4 text-red-500">
                 {error}
               </td>
             </tr>
@@ -51,26 +54,23 @@ const BonusSummaryTable = ({ users, isLoading, error }: Props) => {
                 key={idx}
                 className="bg-gradient-to-r from-[var(--blue-1)] to-[var(--blue-2)] hover:bg-purple-800 border-b-2 border-black rounded-lg"
               >
-                <td className="px-8 py-5 ">{user.id}</td>
+                <td className="px-8 py-5 ">{idx + 1}</td>
                 <td className="px-2 py-5 whitespace-nowrap min-w-[120px]">
                   {user.username}
                 </td>
                 <td className="px-2 py-5 flex gap-5 items-center">
                   <button
-                    onClick={() =>
-                      window.open(user.invoice, "_blank")
-                    }
+                    onClick={() => onInvoicePDF(user.id, "view")}
                     className="text-white-500 hover:text-gray-300"
                   >
                     See once
                   </button>
-                  <a
-                    href={user.invoice}
-                    download
+                  <button
+                    onClick={() => onInvoicePDF(user.id, "download")}
                     className="text-white hover:text-gray-300"
                   >
                     <Download size={20} />
-                  </a>
+                  </button>
                 </td>
               </tr>
             ))

@@ -3,7 +3,7 @@ import Meta from "../../components/custom-ui/Meta";
 import { useUserJoining } from "../../features/Reports/hooks/userJoining";
 import { printUsers } from "../../features/Reports/utils/printdatas";
 import { Toaster } from "sonner";
-import { Pagination, UserJoiningDashboard, Search, Downloadbtn, UserJoiningTable, } from "../../features/Reports";
+import { Pagination, UserJoiningDashboard, Search, Downloadbtn, UserJoiningTable,} from "../../features/Reports";
 
 const ReportUserJoining = () => {
   const [filters, setFilters] = useState({
@@ -16,7 +16,19 @@ const ReportUserJoining = () => {
     offset: 0,
   });
 
-  const { users, isLoading, error, totalCount, exportPDF, exportExcel, copyToClipboard, getPrintData, exportCSV } = useUserJoining(filters);
+  const {
+    users,
+    isLoading,
+    error,
+    totalCount,
+    next,
+    previous,
+    exportPDF,
+    exportExcel,
+    copyToClipboard,
+    getPrintData,
+    exportCSV,
+  } = useUserJoining(filters);
 
   return (
     <>
@@ -68,7 +80,9 @@ const ReportUserJoining = () => {
 
               <Downloadbtn
                 rowsPerPage={filters.limit}
-                onRowsChange={(limit) => setFilters((prev) => ({ ...prev, limit, offset: 0 }))}
+                onRowsChange={(limit) =>
+                  setFilters((prev) => ({ ...prev, limit, offset: 0 }))
+                }
                 onCopy={copyToClipboard}
                 onPDF={exportPDF}
                 onExcel={exportExcel}
@@ -86,9 +100,32 @@ const ReportUserJoining = () => {
                 currentPage={filters.offset / filters.limit + 1}
                 totalCount={totalCount}
                 rowsPerPage={filters.limit}
-                onPageChange={(page) =>
-                  setFilters((prev) => ({ ...prev, offset: (page - 1) * prev.limit, }))
-                }
+                next={next}
+                previous={previous}
+                onPageChange={(page, type, url) => {
+                  if (type === "first") {
+                    setFilters((prev) => ({ ...prev, offset: 0 }));
+                  } else if (type === "last") {
+                    const lastOffset =
+                      (Math.ceil(totalCount / filters.limit) - 1) *
+                      filters.limit;
+                    setFilters((prev) => ({ ...prev, offset: lastOffset }));
+                  } else if (url) {
+                    // backend full URL, extract offset & limit
+                    const params = new URL(url).searchParams;
+                    const offset = parseInt(params.get("offset") || "0", 10);
+                    const limit = parseInt(
+                      params.get("limit") || String(filters.limit),
+                      10
+                    );
+                    setFilters((prev) => ({ ...prev, offset, limit }));
+                  } else {
+                    setFilters((prev) => ({
+                      ...prev,
+                      offset: (page - 1) * prev.limit,
+                    }));
+                  }
+                }}
               />
             </div>
           </div>

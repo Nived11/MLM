@@ -14,35 +14,34 @@ const AucReportTable = ({ users, isLoading, error }: Props) => {
         <thead>
           <tr className="text-left">
             <th className="px-4 py-4 whitespace-nowrap min-w-[120px]">
+              USERNAME
+            </th>
+            <th className="px-2 py-4 whitespace-nowrap min-w-[120px]">
               FROM USER
             </th>
             <th className="px-2 py-4 whitespace-nowrap min-w-[120px]">
               AMOUNT
             </th>
-            <th className="px-2 py-4 whitespace-nowrap min-w-[120px]">
-              PROOF
-            </th>
+            <th className="px-2 py-4 whitespace-nowrap min-w-[120px]">PROOF</th>
             <th className="px-2 py-4 whitespace-nowrap min-w-[120px]">
               STATUS
             </th>
-            <th className="px-2 py-4 whitespace-nowrap min-w-[120px]">
-              DATE
-            </th>
+            <th className="px-2 py-4 whitespace-nowrap min-w-[120px]">DATE</th>
           </tr>
         </thead>
         <tbody>
           {isLoading ? (
-            <SkeletonTable rows={5} columns={5} />
+            <SkeletonTable rows={5} columns={6} />
           ) : error ? (
             <tr>
-              <td colSpan={5} className="text-center py-4 text-red-500">
+              <td colSpan={6} className="text-center py- text-red-500">
                 {error}
               </td>
             </tr>
           ) : users.length === 0 ? (
             <tr>
               <td
-                colSpan={5}
+                colSpan={6}
                 className="text-center py-4 border border-gray-800 rounded-md"
               >
                 No Data Found
@@ -55,10 +54,24 @@ const AucReportTable = ({ users, isLoading, error }: Props) => {
                 className="bg-gradient-to-r from-[var(--blue-1)] to-[var(--blue-2)] hover:bg-purple-800 border-b-2 border-black rounded-lg"
               >
                 <td className="px-4 py-3 whitespace-nowrap min-w-[120px]">
-                  {user.fromuser}
+                  {user.username}
                 </td>
+                <td className="px-2 py-3">{user.fromuser}</td>
                 <td className="px-2 py-3">{user.amount}</td>
-                <td className="px-2 py-3">{user.proof}</td>
+                <td className="px-2 py-3">
+                  {user.proof ? (
+                    <a
+                      href={user.proof}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-400 hover:underline"
+                    >
+                      View
+                    </a>
+                  ) : (
+                    "without proof"
+                  )}
+                </td>
                 <td className="px-2 py-3">
                   {user.status === "Completed" ? (
                     <span className="px-3 py-1 text-xs font-medium rounded-full border border-gray-400 bg-gradient-to-r from-[var(--purple-2)] to-[var(--purple-1)]">

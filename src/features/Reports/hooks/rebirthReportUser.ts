@@ -22,8 +22,15 @@ export const useRebirthReportusers = (filters: Filters) => {
   const [users, setUsers] = useState<RebirthUsers[]>([]);
   const [alluser, setAlluser] = useState<RebirthUsers[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoadingAll, setIsLoadingAll] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [errorAll, setErrorAll] = useState<string | null>(null);
   const [totalCount, setTotalCount] = useState<number>(0);
+  const [pagination, setPagination] = useState<{ next: string | null; previous: string | null }>({
+    next: null,
+    previous: null,
+  });
+
 
   ////////////////// Build query string //////////////////
   const buildQuery = () => {
@@ -40,65 +47,69 @@ export const useRebirthReportusers = (filters: Filters) => {
   ////////////////// Fetch Filtered Users //////////////////
   const fetchUsers = async () => {
     try {
-      
       setIsLoading(true);
       setError(null);
-      
-
       const query = buildQuery();
-      console.log("query", query);
-      
       const res = await api.get(`/referrals/list/${query ? `?${query}` : ""}`);
-      console.log(res.data);
-
       const response = res.data;
-
-      const rawData = Array.isArray(response) ? response : response.data || [];
-      const total = Array.isArray(response) ? response.length : response.total || 0;
+      const rawData = response.results || [];
+      const total = response.count || 0;
 
       const mapped: RebirthUsers[] = rawData.map((r: any) => ({
         username: r.user_id,
         fullname: `${r.first_name} ${r.last_name}`,
         sponsorid: r.referred_by_id,
         sponsorname: r.referred_by_name,
-        placementid: r.position,
+        placementid: r.placement_id || "_",
         email: r.email,
         mobile: r.mobile,
         dateofjoining: formatDate(r.joined_date),
         status: r.status,
       }));
-      console.log("mapped", mapped);
-      
-
       setUsers(mapped);
       setTotalCount(total);
+      setPagination({
+        next: response.next,
+        previous: response.previous,
+      });
     } catch (err) {
       setError(extractErrorMessages(err) || "Could not fetch users");
     } finally {
       setIsLoading(false);
     }
   };
+  useEffect(() => {
+    fetchUsers();
+  }, [JSON.stringify(filters)]);
+
   ////////////////// Fetch All Users //////////////////
 
-
   const fetchAllUsers = async () => {
+    try {
+      setIsLoadingAll(true);
+      setErrorAll(null);
       const res = await api.get(`/referrals/list/`);
       const response = res.data;
-      const rawData = Array.isArray(response) ? response : response.data || [];
+      const rawData = response.results || [];
       const mapped: RebirthUsers[] = rawData.map((r: any) => ({
         username: r.user_id,
         fullname: `${r.first_name} ${r.last_name}`,
         sponsorid: r.referred_by_id,
         sponsorname: r.referred_by_name,
-        placementid: r.position,
+        placementid: r.placement_id || "_",
         email: r.email,
         mobile: r.mobile,
         dateofjoining: formatDate(r.joined_date),
         status: r.status,
       }));
       setAlluser(mapped);
+    } catch (err) {
+      setErrorAll(extractErrorMessages(err) || "something went wrong");
+    } finally {
+      setIsLoadingAll(false);
+    }
   };
-    useEffect(() => {
+  useEffect(() => {
     fetchAllUsers();
   }, []);
 
@@ -141,20 +152,20 @@ export const useRebirthReportusers = (filters: Filters) => {
   };
 
   ////////////////// Copy //////////////////
-  const copyToClipboard =async () => {
+  const copyToClipboard = async () => {
     if (!users.length) return toast.error("No data to copy");
 
     const rows = [
       ["Username", "Fullname", "SponsorName", "PlacementID", "Email", "Mobile", "DateOfJoining", "Status"],
       ...users.map((u) => [
-        u.username  || "N/A",
-        u.fullname  || "N/A",
-        u.sponsorname  || "N/A",
+        u.username || "N/A",
+        u.fullname || "N/A",
+        u.sponsorname || "N/A",
         u.placementid || "N/A",
         u.email || "N/A",
-        u.mobile  || "N/A",
+        u.mobile || "N/A",
         u.dateofjoining || "N/A",
-        u.status  || "N/A",
+        u.status || "N/A",
       ]),
     ];
 
@@ -164,12 +175,12 @@ export const useRebirthReportusers = (filters: Filters) => {
       .join("\n");
 
     try {
-    await navigator.clipboard.writeText(formatted);
-    toast.success("Copied to clipboard!");
-  } catch (err) {
-    console.error("Clipboard copy failed:", err);
-    toast.error("Failed to copy to clipboard");
-  }
+      await navigator.clipboard.writeText(formatted);
+      toast.success("Copied to clipboard!");
+    } catch (err) {
+      console.error("Clipboard copy failed:", err);
+      toast.error("Failed to copy to clipboard");
+    }
   };
 
   ////////////////// Print //////////////////
@@ -193,21 +204,22 @@ export const useRebirthReportusers = (filters: Filters) => {
     ];
   };
 
-  useEffect(() => {
-    fetchUsers();
-  }, [JSON.stringify(filters)]);
+
 
   return {
     users,
     alluser,
     isLoading,
+    isLoadingAll,
     error,
+    errorAll,
     totalCount,
+    next: pagination.next,
+    previous: pagination.previous,
     exportPDF,
     exportExcel,
     exportCSV,
     copyToClipboard,
     getPrintData,
-    refetch: fetchUsers,
   };
 };

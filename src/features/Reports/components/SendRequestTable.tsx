@@ -13,10 +13,11 @@ const SendRequestTable = ({ users, isLoading, error }: Props) => {
       <table className="w-full  text-xs sm:text-sm text-white bg-black rounded-md min-w-0  sm:min-w-0">
         <thead>
           <tr className="text-left">
-            <th className="px-4 py-4 whitespace-nowrap min-w-[120px]">
+
+            <th className="px-4 py-4">USERNAME</th>
+            <th className="px-2 py-4 whitespace-nowrap min-w-[120px]">
               FROM NAME
             </th>
-            <th className="px-2 py-4">USERNAME</th>
             <th className="px-2 py-4">AMOUNT</th>
             <th className="px-2 py-4">PROOF</th>
             <th className="px-3 py-4">STATUS</th>
@@ -50,12 +51,26 @@ const SendRequestTable = ({ users, isLoading, error }: Props) => {
                 key={idx}
                 className="bg-gradient-to-r from-[var(--blue-1)] to-[var(--blue-2)] hover:bg-purple-800 border-b-2 border-black rounded-lg"
               >
-                <td className="px-4 py-3 whitespace-nowrap min-w-[120px]">
+
+                <td className="px-4 py-3">{user.username}</td>
+                <td className="px-2 py-3 whitespace-nowrap ">
                   {user.fromname}
                 </td>
-                <td className="px-2 py-3">{user.username}</td>
                 <td className="px-2 py-3">{user.amount}</td>
-                <td className="px-2 py-3 whitespace-nowrap">{user.proof}</td>
+                <td className="px-2 py-3 whitespace-nowrap">
+                  {user.proof ? (
+                    <a
+                      href={user.proof}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-400 hover:underline"
+                    >
+                      View
+                    </a>
+                  ) : (
+                    "without proof"
+                  )}
+                </td>
                 <td className="px-2 py-3">
                   {user.status === "Completed" ? (
                     <span className="px-3 py-1 text-xs font-medium rounded-full border border-gray-400 bg-gradient-to-r from-[var(--purple-2)] to-[var(--purple-1)]">

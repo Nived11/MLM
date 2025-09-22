@@ -1,20 +1,13 @@
 import { useState } from "react";
 import Meta from "../../components/custom-ui/Meta";
 import { Toaster } from "sonner";
-import { useAucReport } from "../../features/Reports/hooks/aucReport"; // <-- your new hook
+import { useAucReport } from "../../features/Reports/hooks/aucReport";
 import { printUsers } from "../../features/Reports/utils/printdatas";
-import {
-  Pagination,
-  AucDashboard,
-  Search,
-  Downloadbtn,
-  AucReportTable,
-} from "../../features/Reports";
+import { Pagination, AucDashboard, Search, Downloadbtn, AucReportTable, } from "../../features/Reports";
 
 const ReportAuc = () => {
   const [filters, setFilters] = useState({
     search: "",
-    status: "all",
     start_date: "",
     end_date: "",
     limit: 10,
@@ -26,6 +19,7 @@ const ReportAuc = () => {
     isLoading,
     error,
     totalCount,
+    next, previous,
     exportPDF,
     exportExcel,
     exportCSV,
@@ -59,19 +53,16 @@ const ReportAuc = () => {
         <h1 className="text-2xl font-bold">Report</h1>
 
         <div className="py-8 text-white">
-          {/* Dashboard filters */}
           <AucDashboard
             onApply={(values) =>
               setFilters((prev) => ({ ...prev, ...values, offset: 0 }))
             }
           />
 
-          {/* Table Section */}
           <div className="rounded-xl p-[1px] bg-gradient-to-b from-[var(--purple-1)] to-[var(--purple-2)]">
             <div className="rounded-xl bg-black p-6">
               <h2 className="text-lg font-semibold mb-4">AUC Report</h2>
 
-              {/* Search */}
               <Search
                 onSearch={(text) =>
                   setFilters((prev) => ({
@@ -82,7 +73,6 @@ const ReportAuc = () => {
                 }
               />
 
-              {/* Download Options */}
               <Downloadbtn
                 rowsPerPage={filters.limit}
                 onRowsChange={(limit) =>
@@ -95,20 +85,38 @@ const ReportAuc = () => {
                 onPrint={() => printUsers(getPrintData())}
               />
 
-              {/* Table */}
               <AucReportTable users={users} isLoading={isLoading} error={error} />
 
-              {/* Pagination */}
               <Pagination
                 currentPage={filters.offset / filters.limit + 1}
                 totalCount={totalCount}
                 rowsPerPage={filters.limit}
-                onPageChange={(page) =>
-                  setFilters((prev) => ({
-                    ...prev,
-                    offset: (page - 1) * prev.limit,
-                  }))
-                }
+                next={next}
+                previous={previous}
+                onPageChange={(page, type, url) => {
+                  if (type === "first") {
+                    setFilters((prev) => ({ ...prev, offset: 0 }));
+                  } else if (type === "last") {
+                    const lastOffset =
+                      (Math.ceil(totalCount / filters.limit) - 1) *
+                      filters.limit;
+                    setFilters((prev) => ({ ...prev, offset: lastOffset }));
+                  } else if (url) {
+                    // backend full URL, extract offset & limit
+                    const params = new URL(url).searchParams;
+                    const offset = parseInt(params.get("offset") || "0", 10);
+                    const limit = parseInt(
+                      params.get("limit") || String(filters.limit),
+                      10
+                    );
+                    setFilters((prev) => ({ ...prev, offset, limit }));
+                  } else {
+                    setFilters((prev) => ({
+                      ...prev,
+                      offset: (page - 1) * prev.limit,
+                    }));
+                  }
+                }}
               />
             </div>
           </div>

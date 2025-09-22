@@ -1,7 +1,6 @@
 import SkeletonTable from "./SkeletonTable";
 import type { LevelUsers } from "../types";
 
-
 interface Props {
   users: LevelUsers[];
   isLoading: boolean;
@@ -9,7 +8,6 @@ interface Props {
 }
 
 const LevelUserTable = ({ users, isLoading, error }: Props) => {
-
   return (
     <div className="overflow-x-auto rounded-md border-[1px] border-transparent p-[1px] bg-gradient-to-r from-[var(--purple-1)] to-[var(--purple-2)] ">
       <table className="w-full  text-xs sm:text-sm text-white bg-black rounded-md min-w-0  sm:min-w-0">
@@ -20,9 +18,7 @@ const LevelUserTable = ({ users, isLoading, error }: Props) => {
             <th className="px-2 py-4">AMOUNT</th>
             <th className="px-2 py-4">PROOF</th>
             <th className="px-3 py-4">STATUS</th>
-            <th className="px-2 py-4 whitespace-nowrap min-w-[120px]">
-              LEVEL
-            </th>
+            <th className="px-2 py-4 whitespace-nowrap min-w-[120px]">LEVEL</th>
             <th className="px-2 py-4 whitespace-nowrap min-w-[120px]">
               REQUESTED DATE
             </th>
@@ -34,10 +30,7 @@ const LevelUserTable = ({ users, isLoading, error }: Props) => {
             <SkeletonTable rows={5} columns={8} />
           ) : error ? (
             <tr>
-              <td
-                colSpan={8}
-                className="text-center py-4 text-red-500"
-              >
+              <td colSpan={8} className="text-center py-4 text-red-500">
                 {error}
               </td>
             </tr>
@@ -60,13 +53,24 @@ const LevelUserTable = ({ users, isLoading, error }: Props) => {
                   {user.username}
                 </td>
                 <td className="px-2 py-3 whitespace-nowrap min-w-[120px]">
-                  {user.fromname}
+                  {user.fromuser}
                 </td>
                 <td className="px-2 py-3 whitespace-nowrap min-w-[120px]">
                   {user.amount}
                 </td>
                 <td className="px-2 py-3 whitespace-nowrap min-w-[120px]">
-                  {user.proof}
+                  {user.proof ? (
+                    <a
+                      href={user.proof}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-400 hover:underline"
+                    >
+                      View
+                    </a>
+                  ) : (
+                    "without proof"
+                  )}
                 </td>
                 <td className="px-2 py-3 whitespace-nowrap min-w-[120px]">
                   {user.status === "Completed" ? (

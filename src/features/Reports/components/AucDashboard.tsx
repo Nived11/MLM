@@ -29,7 +29,6 @@ const AucDashboard = ({ onApply }: Props) => {
               Report Dashboard
             </h2>
 
-            {/* Filters */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <div>
                 <label className="block mb-2 text-sm">From Date :</label>
@@ -55,7 +54,6 @@ const AucDashboard = ({ onApply }: Props) => {
               </div>
             </div>
 
-            {/* Buttons */}
             <div className="flex flex-wrap sm:flex-row gap-3 sm:gap-4 mt-6 sm:mt-10">
               <button
                 onClick={handleApply}

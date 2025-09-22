@@ -19,12 +19,20 @@ export const useAucReport = (filters: Filters) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [totalCount, setTotalCount] = useState<number>(0);
+  const [pagination, setPagination] = useState<{ next: string | null; previous: string | null }>({
+    next: null,
+    previous: null,
+  });
 
   ////////////////// Build query string //////////////////
   const buildQuery = () => {
     return new URLSearchParams(
       Object.entries(filters).reduce((acc, [k, v]) => {
-        if (v !== "" && v !== undefined && v !== null) {
+        if (
+          v !== undefined &&
+          v !== null &&
+          String(v).trim() !== ""
+        ) {
           acc[k] = String(v);
         }
         return acc;
@@ -37,24 +45,29 @@ export const useAucReport = (filters: Filters) => {
     try {
       setIsLoading(true);
       setError(null);
-
       const query = buildQuery();
+
       const res = await api.get(`/auc-report/${query ? `?${query}` : ""}`);
       const response = res.data;
 
-      const rawData = Array.isArray(response) ? response : response.data || [];
-      const total = Array.isArray(response) ? response.length : response.total || 0;
+      const rawData = response.results || [];
+      const total = response.count || 0;
 
       const mapped: AucReport[] = rawData.map((r: any) => ({
+        username: r.username,
         fromuser: r.from_user,
         amount: r.amount,
         status: r.status,
-        proof: r.proof,
+        proof:  r.payment_method, 
         date: formatDate(r.date),
       }));
 
       setUsers(mapped);
       setTotalCount(total);
+      setPagination({
+        next: response.next,
+        previous: response.previous,
+      });
     } catch (err) {
       setError(extractErrorMessages(err) || "Could not fetch AUC Report");
     } finally {
@@ -65,8 +78,8 @@ export const useAucReport = (filters: Filters) => {
   ////////////////// Exports //////////////////
   const exportPDF = async () => {
     try {
-      const res = await api.get(`/auc-report/?export=pdf`, { responseType: "blob" });
-
+      const query = buildQuery();
+      const res = await api.get(`/auc-report/${query ? `?${query}&` : "?"}export=pdf`, { responseType: "blob" });
       downloadFile(res.data, "auc-report.pdf");
     } catch (err) {
       toast.error(extractErrorMessages(err));
@@ -75,7 +88,8 @@ export const useAucReport = (filters: Filters) => {
 
   const exportExcel = async () => {
     try {
-      const res = await api.get(`/auc-report/?export=xlsx`, { responseType: "blob" });
+      const query = buildQuery();
+      const res = await api.get(`/auc-report/${query ? `?${query}&` : "?"}export=xlsx`, { responseType: "blob" });
       downloadFile(res.data, "auc-report.xlsx");
     } catch (err) {
       toast.error(extractErrorMessages(err));
@@ -84,7 +98,8 @@ export const useAucReport = (filters: Filters) => {
 
   const exportCSV = async () => {
     try {
-      const res = await api.get(`/auc-report/?export=csv`, { responseType: "blob" });
+      const query = buildQuery();
+      const res = await api.get(`/auc-report/${query ? `?${query}&` : "?"}export=csv`, { responseType: "blob" });
       downloadFile(res.data, "auc-report.csv");
     } catch (err) {
       toast.error(extractErrorMessages(err));
@@ -103,7 +118,7 @@ export const useAucReport = (filters: Filters) => {
   };
 
   ////////////////// Copy //////////////////
-  const copyToClipboard = async() => {
+  const copyToClipboard = async () => {
     if (!users.length) return toast.error("No data to copy");
 
     const rows = [
@@ -117,11 +132,11 @@ export const useAucReport = (filters: Filters) => {
       .join("\n");
 
     try {
-    await navigator.clipboard.writeText(formatted);
-    toast.success("Copied to clipboard!");
-  } catch (err) {
-    toast.error("Failed to copy to clipboard");
-  }
+      await navigator.clipboard.writeText(formatted);
+      toast.success("Copied to clipboard!");
+    } catch (err) {
+      toast.error("Failed to copy to clipboard");
+    }
   };
 
   ////////////////// Print //////////////////
@@ -145,6 +160,8 @@ export const useAucReport = (filters: Filters) => {
     isLoading,
     error,
     totalCount,
+    next: pagination.next,
+    previous: pagination.previous,
     exportPDF,
     exportExcel,
     exportCSV,
