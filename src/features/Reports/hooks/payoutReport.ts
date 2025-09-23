@@ -29,14 +29,19 @@ export const usePayoutReport = (filters: Filters) => {
 
   ////////////////// Build query string //////////////////
   const buildQuery = () => {
-    return new URLSearchParams(
-      Object.entries(filters).reduce((acc, [k, v]) => {
-        if (v !== "" && v !== undefined && v !== null) {
-          acc[k] = String(v);
+    const queryParams = Object.entries(filters).reduce((acc, [k, v]) => {
+      if (v !== "" && v !== undefined && v !== null) {
+        // Only add limit to query if it's specified (not "all")
+        if (k === 'limit' && v === -1) {
+          // Skip adding limit for "all" option
+          return acc;
         }
-        return acc;
-      }, {} as Record<string, string>)
-    ).toString();
+        acc[k] = String(v);
+      }
+      return acc;
+    }, {} as Record<string, string>);
+
+    return new URLSearchParams(queryParams).toString();
   };
 
   ////////////////// Fetch Users //////////////////

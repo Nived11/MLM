@@ -1,29 +1,55 @@
 import { adminLinks } from "../../utils/contant";
 import Logo from "../icons/logo";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTrigger } from "../ui/sheet";
 import { Menu } from "lucide-react";
+import { deleteLocalStorage } from "../../utils/helpers/localStorage";
 
 const AdminHeader = () => {
   const location = useLocation();
   const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const logout = () => {
+    console.log("Logging out...");
+    deleteLocalStorage("accessToken");
+    deleteLocalStorage("refreshToken");
+    navigate("/admin/login");
+  };
 
   const NavLinks = () => (
     <ul className="space-y-2 md:space-y-0">
-      {adminLinks.map(({ id, icon: Icon, label, path }) => (
-        <li key={id}>
-          <Link
-            to={path}
-            onClick={() => setOpen(false)}
-            className={`flex items-center gap-3 px-3 py-2 rounded-md md:rounded-none md:px-6 md:py-4 text-sm transition-colors
+      {adminLinks.map(({ id, icon: Icon, label, path }) => {
+        if (label.toLowerCase() === "logout") {
+          return (
+            <li key={id}>
+              <button
+                onClick={() => {
+                  logout();
+                }}
+                className={`flex items-center gap-3 px-3 py-2 rounded-md md:rounded-none md:px-6 md:py-4 text-sm transition-colors
               ${location.pathname === path ? "bg-white text-background" : ""}`}
-          >
-            <Icon size={18} />
-            {label}
-          </Link>
-        </li>
-      ))}
+              >
+                <Icon size={18} />
+                {label}
+              </button>
+            </li>
+          );
+        }
+        return (
+          <li key={id}>
+            <Link
+              to={path}
+              className={`flex items-center gap-3 px-3 py-2 rounded-md md:rounded-none md:px-6 md:py-4 text-sm transition-colors
+              ${location.pathname === path ? "bg-white text-background" : ""}`}
+            >
+              <Icon size={18} />
+              {label}
+            </Link>
+          </li>
+        );
+      })}
     </ul>
   );
 

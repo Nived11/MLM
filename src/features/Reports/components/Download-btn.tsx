@@ -10,53 +10,65 @@ interface DownloadbtnProps {
   onExcel?: () => void;
 }
 
-const Downloadbtn: React.FC<DownloadbtnProps> = ({ rowsPerPage, onRowsChange, onCopy,
+const Downloadbtn: React.FC<DownloadbtnProps> = ({
+  rowsPerPage,
+  onRowsChange,
+  onCopy,
   onCSV,
   onPDF,
   onPrint,
-  onExcel, }) => {
+  onExcel,
+}) => {
+  const getSelectValue = () => {
+    if (!rowsPerPage || rowsPerPage === 12) return -1;
+    return rowsPerPage;
+  };
 
   return (
-
     <div className="flex flex-wrap gap-2 sm:gap-4 mb-8">
       <div className="p-[1px] rounded-md bg-gradient-to-r from-[var(--purple-1)] to-[var(--purple-2)] flex-1 min-w-[100px] sm:flex-none sm:w-auto">
         <button
           onClick={onCopy}
-          className="px-2 sm:px-3 py-1 rounded-md bg-black text-white w-full hover:bg-gradient-to-r from-[var(--purple-1)] to-[var(--purple-2)] text-xs sm:text-sm whitespace-nowrap">
+          className="px-2 sm:px-3 py-1 rounded-md bg-black text-white w-full hover:bg-gradient-to-r from-[var(--purple-1)] to-[var(--purple-2)] text-xs sm:text-sm whitespace-nowrap"
+        >
           Copy
         </button>
       </div>
       <div className="p-[1px] rounded-md bg-gradient-to-r from-[var(--purple-1)] to-[var(--purple-2)] flex-1 min-w-[100px] sm:flex-none sm:w-auto">
         <button
           onClick={onCSV}
-          className="px-2 sm:px-3 py-1 rounded-md bg-black text-white w-full hover:bg-gradient-to-r from-[var(--purple-1)] to-[var(--purple-2)] text-xs sm:text-sm whitespace-nowrap">
+          className="px-2 sm:px-3 py-1 rounded-md bg-black text-white w-full hover:bg-gradient-to-r from-[var(--purple-1)] to-[var(--purple-2)] text-xs sm:text-sm whitespace-nowrap"
+        >
           CSV
         </button>
       </div>
       <div className="p-[1px] rounded-md bg-gradient-to-r from-[var(--purple-1)] to-[var(--purple-2)] flex-1 min-w-[100px] sm:flex-none sm:w-auto">
         <button
           onClick={onPDF}
-          className="px-2 sm:px-3 py-1 rounded-md bg-black text-white w-full hover:bg-gradient-to-r from-[var(--purple-1)] to-[var(--purple-2)] text-xs sm:text-sm whitespace-nowrap">
+          className="px-2 sm:px-3 py-1 rounded-md bg-black text-white w-full hover:bg-gradient-to-r from-[var(--purple-1)] to-[var(--purple-2)] text-xs sm:text-sm whitespace-nowrap"
+        >
           PDF
         </button>
       </div>
-      <div className="p-[1px] rounded-md bg-gradient-to-r from-[var(--purple-1)] to-[var(--purple-2)] flex-1 min-w-[100px] sm:flex-none sm:w-auto ">
+      <div className="p-[1px] rounded-md bg-gradient-to-r from-[var(--purple-1)] to-[var(--purple-2)] flex-1 min-w-[100px] sm:flex-none sm:w-auto">
         <button
           onClick={onPrint}
-          className="px-2 sm:px-3 py-1 rounded-md bg-black text-white w-full hover:bg-gradient-to-r from-[var(--purple-1)] to-[var(--purple-2)] text-xs sm:text-sm whitespace-nowrap">
+          className="px-2 sm:px-3 py-1 rounded-md bg-black text-white w-full hover:bg-gradient-to-r from-[var(--purple-1)] to-[var(--purple-2)] text-xs sm:text-sm whitespace-nowrap"
+        >
           Print
         </button>
       </div>
       <div className="p-[1px] rounded-md bg-gradient-to-r from-[var(--purple-1)] to-[var(--purple-2)] flex-1 min-w-[100px] sm:flex-none sm:w-auto">
         <button
           onClick={onExcel}
-          className="px-2 sm:px-3 py-1 rounded-md bg-black text-white w-full hover:bg-gradient-to-r from-[var(--purple-1)] to-[var(--purple-2)] text-xs sm:text-sm whitespace-nowrap">
+          className="px-2 sm:px-3 py-1 rounded-md bg-black text-white w-full hover:bg-gradient-to-r from-[var(--purple-1)] to-[var(--purple-2)] text-xs sm:text-sm whitespace-nowrap"
+        >
           Excel
         </button>
       </div>
       <div className="p-[1px] rounded-md bg-gradient-to-r from-[var(--purple-1)] to-[var(--purple-2)] flex-1 min-w-[140px] sm:flex-none sm:w-auto">
         <select
-          value={rowsPerPage}
+          value={getSelectValue()}
           onChange={(e) => onRowsChange(Number(e.target.value))}
           className="w-full bg-black rounded-md px-5 pr-8 py-1 text-white text-xs sm:text-sm cursor-pointer focus:outline-none appearance-none"
           style={{
@@ -66,7 +78,9 @@ const Downloadbtn: React.FC<DownloadbtnProps> = ({ rowsPerPage, onRowsChange, on
             backgroundSize: "20px",
           }}
         >
+          <option value={-1}>Show default</option>
           <option value={10}>Show 10 rows</option>
+          <option value={25}>Show 25 rows</option>
           <option value={50}>Show 50 rows</option>
           <option value={100}>Show 100 rows</option>
         </select>

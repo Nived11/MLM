@@ -57,6 +57,7 @@ const SendHelp = () => {
 
           {referHelpLevel && (
             <SendHelpCard
+              levelName={referHelpLevel.level_name} 
               amount={parseFloat(referHelpLevel.amount)}
               status={referHelpLevel.status === "not_paid" ? "Not Paid" : "Pending"}
               gpay={true}

@@ -24,6 +24,7 @@ export const ProfilePage = () => {
     try {
       setSaving(true);
       await saveProfileChanges();
+      window.location.reload();
     } finally {
       setSaving(false);
     }
@@ -107,13 +108,8 @@ export const ProfilePage = () => {
               )}
             </div>
 
-            <div className="flex flex-col md:col-span-2 space-y-4 items-center">
-              <label
-                htmlFor="formFileInput"
-                className="mt-4 mb-2 w-40 text-center py-2 rounded-md bg-gradient-to-r from-purple-1 to-purple-2 text-white cursor-pointer hover:opacity-90 transition"
-              >
-                Choose Profile Photo
-              </label>
+            <div className="flex flex-col md:col-span-2 space-y-4 ">
+              
               <Input
                 id="formFileInput"
                 type="file"
@@ -134,6 +130,12 @@ export const ProfilePage = () => {
                   )}
                 </div>
               </div>
+              <label
+                htmlFor="formFileInput"
+                className="mt-4 mb-2 w-40 text-center py-2 rounded-md bg-gradient-to-r from-purple-1 to-purple-2 text-white cursor-pointer hover:opacity-90 transition"
+              >
+                Choose Profile Photo
+              </label>
             </div>
 
             <div className="flex justify-center md:col-span-2 mt-6">

@@ -5,15 +5,24 @@ import { useLevelUsers } from "../../features/Reports/hooks/levelUsers";
 import { printUsers } from "../../features/Reports/utils/printdatas";
 import { Pagination, LevelUserDashboard, Search, Downloadbtn, LevelUserTable,} from "../../features/Reports";
 
+interface FiltersState {
+  search: string;
+    from_user: string;
+    status: string;
+    start_date: string;
+    end_date: string;
+  limit?: number; // Optional number
+  page: number;
+}
 const ReportLevelUser = () => {
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<FiltersState>({
     search: "",
     from_user: "",
     status: "",
     start_date: "",
     end_date: "",
-    limit: 10,
-    offset: 0,
+    limit: undefined, // Start with no limit (show all with backend pagination)
+    page: 1,
   });
 
  const {
@@ -32,6 +41,37 @@ const ReportLevelUser = () => {
   getPrintData,
 } = useLevelUsers(filters);
 
+ const getCurrentPage = () => {
+    if (next && previous) {
+      // Extract page from next URL
+      const nextUrl = new URL(next);
+      const nextPage = parseInt(nextUrl.searchParams.get("page") || "2", 10);
+      return nextPage - 1;
+    } else if (next && !previous) {
+      return 1; // First page
+    } else if (!next && previous) {
+      // Extract page from previous URL and add 1
+      const prevUrl = new URL(previous);
+      const prevPage = parseInt(prevUrl.searchParams.get("page") || "1", 10);
+      return prevPage + 1;
+    }
+    return 1;
+  };
+
+  const getItemsPerPage = () => {
+    // Calculate items per page based on current results
+    if (users.length === 0) return 12; // Default backend page size
+    
+    const currentPage = getCurrentPage();
+    if (currentPage === 1 && next) {
+      return users.length; // Items on first page
+    } else if (!next && previous) {
+      // Last page - calculate based on total and previous pages
+      const totalPages = Math.ceil(totalCount / users.length);
+      return Math.floor(totalCount / totalPages);
+    }
+    return users.length;
+  };
 
 
   return (
@@ -80,10 +120,12 @@ const ReportLevelUser = () => {
               />
 
               <Downloadbtn
-                rowsPerPage={filters.limit}
-                onRowsChange={(limit) =>
-                  setFilters((prev) => ({ ...prev, limit, offset: 0 }))
-                }
+                rowsPerPage={filters.limit || getItemsPerPage()}
+                onRowsChange={(limit) => {
+                  // Handle special case for "All" option
+                  const newLimit = limit === -1 ? undefined : limit;
+                  setFilters((prev) => ({ ...prev, limit: newLimit, page: 1 }));
+                }}
                 onCopy={copyToClipboard}
                 onPDF={exportPDF}
                 onExcel={exportExcel}
@@ -94,33 +136,24 @@ const ReportLevelUser = () => {
               <LevelUserTable users={users} isLoading={isLoading} error={error} />
 
               <Pagination
-                currentPage={filters.offset / filters.limit + 1}
+                currentPage={getCurrentPage()}
                 totalCount={totalCount}
-                rowsPerPage={filters.limit}
+                rowsPerPage={getItemsPerPage()}
                 next={next}
                 previous={previous}
                 onPageChange={(page, type, url) => {
                   if (type === "first") {
-                    setFilters((prev) => ({ ...prev, offset: 0 }));
+                    setFilters((prev) => ({ ...prev, page: 1 }));
                   } else if (type === "last") {
-                    const lastOffset =
-                      (Math.ceil(totalCount / filters.limit) - 1) *
-                      filters.limit;
-                    setFilters((prev) => ({ ...prev, offset: lastOffset }));
+                    const totalPages = Math.ceil(totalCount / getItemsPerPage());
+                    setFilters((prev) => ({ ...prev, page: totalPages }));
                   } else if (url) {
-                    // backend full URL, extract offset & limit
+                    // Extract page from backend URL
                     const params = new URL(url).searchParams;
-                    const offset = parseInt(params.get("offset") || "0", 10);
-                    const limit = parseInt(
-                      params.get("limit") || String(filters.limit),
-                      10
-                    );
-                    setFilters((prev) => ({ ...prev, offset, limit }));
+                    const pageNum = parseInt(params.get("page") || "1", 10);
+                    setFilters((prev) => ({ ...prev, page: pageNum }));
                   } else {
-                    setFilters((prev) => ({
-                      ...prev,
-                      offset: (page - 1) * prev.limit,
-                    }));
+                    setFilters((prev) => ({ ...prev, page }));
                   }
                 }}
               />

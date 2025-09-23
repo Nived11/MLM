@@ -1,8 +1,8 @@
+
 import { useEffect, useState } from "react"
 import api from "../../../lib/api"
 import type { ReferralUser } from "../type"
 import { extractErrorMessages } from "../../../utils/helpers/extractErrorMessage"
-
 
 export const useAllReferrals = () => {
   const [data, setData] = useState<ReferralUser[]>([])
@@ -14,9 +14,10 @@ export const useAllReferrals = () => {
       try {
         setLoading(true)
         const response = await api.get("/referrals/list/")
-        console.log("list:",response);
-        
-        setData(response.data)
+
+        console.log("list:", response.data)
+
+        setData(response.data.results || [])
       } catch (err: any) {
         setError(extractErrorMessages(err.message) || "Something went wrong")
       } finally {

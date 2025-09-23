@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from "axios";
+import { extractErrorMessages } from "../../../utils/helpers/extractErrorMessage";
 
 export const baseURL = import.meta.env.VITE_API_URL || "";
 interface LevelData {
@@ -7,6 +8,15 @@ interface LevelData {
     completed_count: number;
     percentage: number;
 }
+const SkeletonRow: React.FC = () => (
+    <div className="flex items-center justify-between py-4 animate-pulse">
+        <div className="h-5 w-24 bg-gray-700 rounded" />
+        <div className="flex gap-5">
+            <div className="h-5 w-8 bg-gray-700 rounded" />
+            <div className="h-5 w-12 bg-gray-700 rounded" />
+        </div>
+    </div>
+);
 
 const LevelUserCount: React.FC = () => {
 
@@ -23,11 +33,11 @@ const LevelUserCount: React.FC = () => {
                         Authorization: token ? `Bearer ${token}` : undefined,
                     },
                 });
-                console.log("userLevelData:", userLevelData);
                 const data = Array.isArray(res.data) ? res.data : [];
                 setUserLevelData(data);
             } catch (err: any) {
-                setError("Failed to fetch user levels");
+                setError(extractErrorMessages(err) || "Failed to fetch level user count");
+
             } finally {
                 setLoading(false);
             }
@@ -35,7 +45,6 @@ const LevelUserCount: React.FC = () => {
         fetchLevels();
     }, []);
 
-    if (loading) return <div className="text-white">Loading...</div>;
     if (error) return <div className="text-red-500">{error}</div>;
 
     const levels: LevelData[] = Array.from({ length: 6 }, (_, i) => {
@@ -52,20 +61,29 @@ const LevelUserCount: React.FC = () => {
             <div className="rounded-2xl rounded-br-2xl bg-black p-8 ">
                 <div>
 
-                    {levels.map((userLevel, idx) => (
-                        <React.Fragment key={userLevel.level_name}>
-                            <div className="flex items-center justify-between py-4">
-                                <span className="text-white text-lg font-medium">Level {userLevel.level_name}</span>
-                                <div className='items-end justify-between '>
-                                    <span className="text-white text-lg font-bold mr-5">{userLevel.completed_count}</span>
-                                    <span className="text-white text-lg font-bold">{`${userLevel.percentage} %`}</span>
+                    {loading
+                        ? Array.from({ length: 6 }).map((_, idx) => (
+                            <React.Fragment key={idx}>
+                                <SkeletonRow />
+                                {idx < 5 && (
+                                    <div className="p-[2px] rounded-2xl bg-gradient-to-l from-purple-1 to-purple-2" />
+                                )}
+                            </React.Fragment>
+                        ))
+                        : levels.map((userLevel, idx) => (
+                            <React.Fragment key={userLevel.level_name}>
+                                <div className="flex items-center justify-between py-4">
+                                    <span className="text-white text-lg font-medium">Level {userLevel.level_name}</span>
+                                    <div className='items-end justify-between '>
+                                        <span className="text-white text-lg font-bold mr-5">{userLevel.completed_count}</span>
+                                        <span className="text-white text-lg font-bold">{`${userLevel.percentage} %`}</span>
+                                    </div>
                                 </div>
-                            </div>
-                            {idx < levels.length && (
-                                <div className="p-[2px] rounded-2xl bg-gradient-to-l from-purple-1 to-purple-2"></div>
-                            )}
-                        </React.Fragment>
-                    ))}
+                                {idx < levels.length && (
+                                    <div className="p-[2px] rounded-2xl bg-gradient-to-l from-purple-1 to-purple-2"></div>
+                                )}
+                            </React.Fragment>
+                        ))}
                 </div>
             </div>
         </div>

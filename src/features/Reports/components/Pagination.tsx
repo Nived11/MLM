@@ -1,3 +1,4 @@
+// Updated Pagination component
 interface PaginationProps {
   currentPage: number;
   totalCount: number;
@@ -27,7 +28,7 @@ const Pagination: React.FC<PaginationProps> = ({
 
       <div className="flex gap-4 sm:gap-6">
         <button
-          disabled={currentPage === 1}
+          disabled={!previous}
           onClick={() => onPageChange(1, "first")}
           className="hover:text-white text-sm disabled:opacity-50"
         >
@@ -42,6 +43,7 @@ const Pagination: React.FC<PaginationProps> = ({
           Previous
         </button>
 
+
         <button
           disabled={!next}
           onClick={() => onPageChange(currentPage + 1, "next", next || undefined)}
@@ -51,7 +53,7 @@ const Pagination: React.FC<PaginationProps> = ({
         </button>
 
         <button
-          disabled={currentPage === totalPages || totalPages === 0}
+          disabled={!next}
           onClick={() => onPageChange(totalPages, "last")}
           className="hover:text-white text-sm disabled:opacity-50"
         >
@@ -61,4 +63,5 @@ const Pagination: React.FC<PaginationProps> = ({
     </div>
   );
 };
+
 export default Pagination;

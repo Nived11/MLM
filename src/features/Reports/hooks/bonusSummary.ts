@@ -30,14 +30,19 @@ export const useBonusSummary = (filters: Filters = {}) => {
 
   ////////////////// Build query string //////////////////
   const buildQuery = () => {
-    return new URLSearchParams(
-      Object.entries(filters).reduce((acc, [k, v]) => {
-        if (v !== "" && v !== undefined && v !== null) {
-          acc[k] = String(v);
+    const queryParams = Object.entries(filters).reduce((acc, [k, v]) => {
+      if (v !== "" && v !== undefined && v !== null) {
+        // Only add limit to query if it's specified (not "all")
+        if (k === 'limit' && v === -1) {
+          // Skip adding limit for "all" option
+          return acc;
         }
-        return acc;
-      }, {} as Record<string, string>)
-    ).toString();
+        acc[k] = String(v);
+      }
+      return acc;
+    }, {} as Record<string, string>);
+
+    return new URLSearchParams(queryParams).toString();
   };
 
   ////////////////// Fetch Users //////////////////
@@ -54,7 +59,8 @@ export const useBonusSummary = (filters: Filters = {}) => {
 
       const mapped: BonusSummary[] = rawData.map((r: any) => ({
         id: r.id,
-        username: r.username,
+        username: r.username || "N/A",
+        date:r.requested_date || "N/A",
       }));
 
       setUsers(mapped);
@@ -108,10 +114,10 @@ export const useBonusSummary = (filters: Filters = {}) => {
     if (!users.length) return toast.error("No data to export");
 
     const doc = new jsPDF();
-    const rows = users.map((u, idx) => [idx + 1, u.username || "N/A", u.invoice || "N/A"]);
+    const rows = users.map((u, idx) => [idx + 1, u.username || "N/A", u.invoice || "N/A" ,u.date || "N/A"]);
 
     autoTable(doc, {
-      head: [["#", "Username", "Invoice"]],
+      head: [["#", "Username", "Invoice" ,"Date"]],
       body: rows,
     });
     doc.save("bonus-summary.pdf");
@@ -121,8 +127,8 @@ export const useBonusSummary = (filters: Filters = {}) => {
     if (!users.length) return toast.error("No data to export");
 
     const wsData = [
-      ["#", "Username", "Invoice"],
-      ...users.map((u, idx) => [idx + 1, u.username || "N/A", u.invoice || "N/A"]),
+      ["#", "Username", "Invoice" ,"Date"],
+      ...users.map((u, idx) => [idx + 1, u.username || "N/A", u.invoice || "N/A" ,u.date || "N/A"]),
     ];
 
     const ws = XLSX.utils.aoa_to_sheet(wsData);
@@ -135,8 +141,8 @@ export const useBonusSummary = (filters: Filters = {}) => {
     if (!users.length) return toast.error("No data to export");
 
     const rows = [
-      ["#", "Username", "Invoice"],
-      ...users.map((u, idx) => [String(idx + 1), u.username || "N/A", u.invoice || "N/A"]),
+      ["#", "Username", "Invoice" ,"Date"],
+      ...users.map((u, idx) => [String(idx + 1), u.username || "N/A", u.invoice || "N/A" ,u.date || "N/A"]),
     ];
 
     const csvContent = rows.map((r) => r.join(",")).join("\n");
@@ -150,8 +156,8 @@ export const useBonusSummary = (filters: Filters = {}) => {
     if (!users.length) return toast.error("No data to copy");
 
     const rows = [
-      ["#", "Username", "Invoice"],
-      ...users.map((u, idx) => [String(idx + 1) || "N/A", u.username || "N/A", u.invoice || "N/A"]),
+      ["#", "Username", "Invoice" ,"Date"],
+      ...users.map((u, idx) => [String(idx + 1) || "N/A", u.username || "N/A", u.invoice || "N/A" ,u.date || "N/A"]),
     ];
 
     const colWidths = rows[0].map((_, i) => Math.max(...rows.map((r) => r[i].length)));
@@ -175,8 +181,8 @@ export const useBonusSummary = (filters: Filters = {}) => {
       return null;
     }
     return [
-      ["#", "Username", "Invoice"],
-      ...users.map((u, idx) => [String(idx + 1), u.username || "N/A", u.invoice || "N/A"]),
+      ["#", "Username", "Invoice" ,"Date"],
+      ...users.map((u, idx) => [String(idx + 1), u.username || "N/A", u.invoice || "N/A" ,u.date || "N/A"]),
     ];
   };
 

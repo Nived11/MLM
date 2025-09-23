@@ -9,6 +9,7 @@ export interface AucReport {
 export interface BonusSummary {
   id: number;
   username: string;
+  date: string;
   invoice: string;
 }
 export interface LevelUsers {

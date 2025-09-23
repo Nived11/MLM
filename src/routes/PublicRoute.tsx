@@ -1,5 +1,5 @@
 import { Route } from "react-router";
-import { ForgotPassword, Login, SignUp } from "../pages/user";
+import { ForgotPassword, Login, ResetPassword, SignUp } from "../pages/user";
 import PublicLayout from "../layouts/PublicLayout";
 
 const PublicRoute = () => {
@@ -8,6 +8,7 @@ const PublicRoute = () => {
       <Route path="/login" element={<Login />} /> {/* Shabana */}
       <Route path="/register" element={<SignUp />} /> {/* Shabana */}
       <Route path="/forgot-password" element={<ForgotPassword />} /> {/* Shabana */}
+      <Route path="/reset-password" element={<ResetPassword />} /> {/* Shabana */}
     </Route>
   );
 };

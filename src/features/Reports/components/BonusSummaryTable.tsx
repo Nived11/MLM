@@ -28,11 +28,14 @@ const BonusSummaryTable = ({
             <th className="px-2 py-6 whitespace-nowrap min-w-[120px]">
               INVOICE
             </th>
+            <th className="px-2 py-6 whitespace-nowrap min-w-[120px]">
+              Date
+            </th>
           </tr>
         </thead>
         <tbody>
           {isLoading ? (
-            <SkeletonTable rows={5} columns={3} />
+            <SkeletonTable rows={5} columns={4} />
           ) : error ? (
             <tr>
               <td colSpan={8} className="text-center py-4 text-red-500">
@@ -71,6 +74,9 @@ const BonusSummaryTable = ({
                   >
                     <Download size={20} />
                   </button>
+                </td>
+                <td className="px-2 py-5 whitespace-nowrap min-w-[120px]">
+                  {user.date}
                 </td>
               </tr>
             ))

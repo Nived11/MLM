@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setAuth, setError, setLoading } from "../slices/authSlice";
+import { setAuth, setError, setLoading, type UserType } from "../slices/authSlice";
 import api from "../lib/api";
 import type { RootState } from "../store";
 
@@ -15,7 +15,8 @@ export const useUser = () => {
             try {
                 const res = await api.get("/me/", { withCredentials: true });
 
-                const data = res.data;
+                const data: UserType = res.data;
+                console.log("Data :", data)
                 if (data) {
                     dispatch(setAuth(data));
                 }

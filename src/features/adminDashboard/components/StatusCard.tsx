@@ -1,22 +1,29 @@
 import React, { useState, useEffect } from 'react';
-import type { DashboardStats } from '../services/dashboardService';
-import dashboardService from '../services/dashboardService';
-import mockDashboardService from '../services/mockDashboardService';
+import api from "../../../lib/api";
 
 interface StatCard {
     title: string;
     value: string;
 }
 
+interface DashboardResponse {
+    total_members: number;
+    total_income: number;
+    total_active_level_6: number;
+    new_users_per_level: any[];
+    recent_payments: any[];
+    new_user_registrations: any[];
+    latest_report: any;
+}
+
 const StatusCards: React.FC = () => {
     const [stats, setStats] = useState<StatCard[]>([
         { title: 'Total Members', value: '0' },
         { title: 'Total Income', value: '$0' },
-        { title: 'Active Levels', value: '0' }
+        { title: 'Active Level 6', value: '0' }
     ]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
-    const [usingMockData, setUsingMockData] = useState<boolean>(false);
 
     useEffect(() => {
         fetchDashboardData();
@@ -26,10 +33,9 @@ const StatusCards: React.FC = () => {
         try {
             setLoading(true);
             setError(null);
-            setUsingMockData(false);
             
-            // Try real API first
-            const data: DashboardStats = await dashboardService.getDashboardStats();
+            const res = await api.get("/dashboard/");
+            const data: DashboardResponse = res.data;
             
             const formattedStats: StatCard[] = [
                 { 
@@ -38,50 +44,30 @@ const StatusCards: React.FC = () => {
                 },
                 { 
                     title: 'Total Income', 
-                    value: `$${data.total_income?.toLocaleString() || '0'}` 
+                    value: `₹${data.total_income?.toLocaleString() || '0'}` 
                 },
                 { 
-                    title: 'Active Levels', 
-                    value: data.active_levels?.toString() || '0' 
+                    title: 'Active Level 6', 
+                    value: data.total_active_level_6?.toString() || '0' 
                 }
             ];
             
             setStats(formattedStats);
         } catch (err: any) {
-            console.error('Real API failed, falling back to mock data:', err);
+            console.error('Failed to fetch dashboard data:', err);
+            setError('Failed to load dashboard data');
             
-            // Fall back to mock data
-            try {
-                const mockData = await mockDashboardService.getDashboardStats();
-                const formattedStats: StatCard[] = [
-                    { 
-                        title: 'Total Members', 
-                        value: mockData.total_members?.toLocaleString() || '0' 
-                    },
-                    { 
-                        title: 'Total Income', 
-                        value: `$${mockData.total_income?.toLocaleString() || '0'}` 
-                    },
-                    { 
-                        title: 'Active Levels', 
-                        value: mockData.active_levels?.toString() || '0' 
-                    }
-                ];
-                
-                setStats(formattedStats);
-                setUsingMockData(true);
-            } catch (mockErr) {
-                setError('Failed to load dashboard data');
-                setStats([
-                    { title: 'Total Members', value: '0' },
-                    { title: 'Total Income', value: '$0' },
-                    { title: 'Active Levels', value: '0' }
-                ]);
-            }
+            // Keep default values on error
+            setStats([
+                { title: 'Total Members', value: '0' },
+                { title: 'Total Income', value: '₹0' },
+                { title: 'Active Level 6', value: '0' }
+            ]);
         } finally {
             setLoading(false);
         }
     };
+
 
     if (loading) {
         return (
@@ -100,24 +86,7 @@ const StatusCards: React.FC = () => {
 
     return (
         <div className="space-y-4">
-            {/* Mock Data Warning */}
-            {/* {usingMockData && (
-                <div className="bg-yellow-900/30 border border-yellow-600/50 text-yellow-300 rounded-xl p-3">
-                    <div className="flex items-center gap-2 text-sm">
-                        <span>⚠️</span>
-                        <span>Using mock data - Backend API is unavailable</span>
-                        <button 
-                            onClick={fetchDashboardData}
-                            className="ml-auto px-2 py-1 bg-yellow-600 text-yellow-100 text-xs rounded hover:bg-yellow-700"
-                        >
-                            Retry Real API
-                        </button>
-                    </div>
-                </div>
-            )} */}
-
-            {/* Error State */}
-            {error && !usingMockData && (
+            {error && (
                 <div className="bg-red-900/30 border border-red-600/50 text-red-300 rounded-xl p-3">
                     <div className="flex items-center gap-2 text-sm">
                         <span>❌</span>
@@ -137,12 +106,10 @@ const StatusCards: React.FC = () => {
                 {stats.map((stat, index) => (
                     <div 
                         key={index} 
-                        className={`bg-[#121021] text-center rounded-xl p-4 sm:p-6 ${
-                            usingMockData ? 'border border-yellow-600/30' : error ? 'border border-red-600/20' : 'border border-green-600/20'
-                        }`}
+                        className="bg-[#121021] text-center rounded-xl p-4 sm:p-6 border border-purple-600/20 hover:border-purple-500/30 transition-colors"
                     >
-                        <h3 className="text-xs sm:text-base font-medium mb-2">{stat.title}</h3>
-                        <p className="text-base sm:text-2xl font-bold">{stat.value}</p>
+                        <h3 className="text-gray-400 text-xs sm:text-base font-medium mb-2">{stat.title}</h3>
+                        <p className="text-white text-base sm:text-2xl font-bold">{stat.value}</p>
                     </div>
                 ))}
             </div>

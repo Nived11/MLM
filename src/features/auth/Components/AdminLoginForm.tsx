@@ -1,9 +1,11 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
 import logo from "../../../components/icons/logo";
 import moneybg from "../../../assets/images/money-bg.png";
 import { Eye, EyeOff, Shield } from "lucide-react";
 import { adminLogin } from "../services/api";
+import { useDispatch } from "react-redux";
+import { setAuth } from "../../../slices/authSlice";
+import { useNavigate } from "react-router-dom";
 
 const AdminLoginForm: React.FC = () => {
   const [userId, setUserId] = useState("");
@@ -11,6 +13,8 @@ const AdminLoginForm: React.FC = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,12 +26,17 @@ const AdminLoginForm: React.FC = () => {
       console.log("Login success:", data);
 
       // Save token (if returned)
-      if (data.access) {
-        localStorage.setItem("access_token", data.access);
-      }
 
-      // Redirect admin
-      window.location.href = "/admin/dashboard";
+      if (data.user_id !== "adm") {
+        setError("You do not have the permission to access the pages.");
+        return;
+      }
+      if (data.access) {
+        localStorage.setItem("accessToken", data.access);
+        localStorage.setItem("refreshToken", data?.refresh);
+        dispatch(setAuth({ user_id: data.user_id }));
+        navigate("/admin/dashboard");
+      }
     } catch (err: any) {
       setError(err.response?.data?.detail || "Invalid UserID or Password");
     } finally {
@@ -108,15 +117,6 @@ const AdminLoginForm: React.FC = () => {
               <p className="text-sm text-red-500 text-center">{error}</p>
             )}
 
-            <div className="flex justify-end">
-              <Link
-                to="/admin/forgot-password"
-                className="text-sm text-red-400 hover:underline"
-              >
-                Forgot Password
-              </Link>
-            </div>
-
             {/* Submit */}
             <button
               type="submit"
@@ -126,13 +126,6 @@ const AdminLoginForm: React.FC = () => {
               {loading ? "Logging in..." : "Admin Login"}
             </button>
           </form>
-
-          <p className="mt-6 text-center text-sm text-gray-400">
-            Need user access?{" "}
-            <Link to="/login" className="text-red-400 hover:underline font-medium">
-              User Login
-            </Link>
-          </p>
         </div>
       </div>
     </div>

@@ -1,6 +1,5 @@
 import Meta from "../../components/custom-ui/Meta";
 
-import ActionButton from "../../features/adminDashboard/components/ActionButton";
 import DailyIncomeChart from "../../features/adminDashboard/components/DailyIncomeChart";
 import NewUserRegistrations from "../../features/adminDashboard/components/NewUserRegistration";
 import RecentPayments from "../../features/adminDashboard/components/RecentPayment";
@@ -28,7 +27,6 @@ const Dashboard = () => {
       </div>
 
       <div className="ml-6 mr-6 mt-4 sm:mr-6 sm:mt-10 sm:mb-12 max-w-280">
-        <ActionButton />
       </div>
     </div>
 

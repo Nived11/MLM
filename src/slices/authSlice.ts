@@ -1,11 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 export type UserType = {
-    id: number;
-    first_name: string;
-    last_name: string;
-    phone_number: string;
+    user_id: string;
 }
+
 interface AuthState {
     user: UserType | null;
     loading: boolean;

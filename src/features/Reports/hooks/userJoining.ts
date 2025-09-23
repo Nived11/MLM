@@ -12,7 +12,7 @@ interface Filters {
   end_date?: string;
   status?: string;
   limit?: number;
-  offset?: number;
+  page?: number;
 }
 
 export const useUserJoining = (filters: Filters) => {
@@ -29,20 +29,22 @@ export const useUserJoining = (filters: Filters) => {
   });
 
   ////////////// Build query string from filters///////////////////
-
   const buildQuery = () => {
-    return new URLSearchParams(
-      Object.entries(filters).reduce((acc, [k, v]) => {
-        if (v !== "" && v !== undefined && v !== null) {
-          acc[k] = String(v);
+    const queryParams = Object.entries(filters).reduce((acc, [k, v]) => {
+      if (v !== "" && v !== undefined && v !== null) {
+        // Only add limit to query if it's specified (not "all")
+        if (k === 'limit' && v === -1) {
+          return acc;
         }
-        return acc;
-      }, {} as Record<string, string>)
-    ).toString();
+        acc[k] = String(v);
+      }
+      return acc;
+    }, {} as Record<string, string>);
+
+    return new URLSearchParams(queryParams).toString();
   };
 
   ////////////////////// FETCH USERS /////////////////////
-
   const fetchUsers = async () => {
     try {
       setIsLoading(true);
@@ -82,7 +84,6 @@ export const useUserJoining = (filters: Filters) => {
   ///////////////////// PDF & EXCEL EXPORT /////////////////////
   const exportPDF = async () => {
     try {
-      // const query = buildQuery();
       const res = await api.get(`/referrals/list/?export=pdf`, {
         responseType: "blob",
       });
@@ -94,20 +95,17 @@ export const useUserJoining = (filters: Filters) => {
 
   const exportExcel = async () => {
     try {
-      // const query = buildQuery();
       const res = await api.get(`/referrals/list/?export=xlsx`, {
         responseType: "blob",
       });
-
       downloadFile(res.data, "user-joining.xlsx");
     } catch (err) {
       toast.error(extractErrorMessages(err));
     }
   };
-  ///////////////////// CSV EXPORT /////////////////////
+
   const exportCSV = async () => {
     try {
-      // const query = buildQuery();
       const res = await api.get(`/referrals/list/?export=csv`, {
         responseType: "blob",
       });
@@ -129,7 +127,6 @@ export const useUserJoining = (filters: Filters) => {
   };
 
   //////////////////// COPY TO CLIPBOARD ///////////////////////////
-
   const copyToClipboard = async () => {
     if (!users.length) return toast.error("No data to copy");
 

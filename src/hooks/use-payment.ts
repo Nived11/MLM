@@ -5,7 +5,6 @@ import { useEffect } from "react";
 import { loadRazorpayScript } from "../config/loadRazorpay";
 import api from "../lib/api";
 import { APP_NAME } from "../utils/contant";
-
 interface RazorpayResponse {
     razorpay_order_id: string;
     razorpay_payment_id: string;
@@ -57,7 +56,7 @@ export const usePayment = () => {
 
     const navigate = useNavigate();
 
-    const initiatePayment = async (details: { registration_token: string }) => {
+    const initiatePayment = async (details: { registration_token: string; userIdPayload: any; }) => {
         setIsLoading(true);
         setError("");
         setPurchase(null);
@@ -70,11 +69,8 @@ export const usePayment = () => {
         }
 
         try {
-            console.log("payload:", details);
             const res = await api.post<PaymentCreateResponse>(
                 '/razorpay/order/', { registration_token: details.registration_token });
-
-            console.log("payment response:", res.data);
 
             const data = res.data;
             const options = {
@@ -91,19 +87,38 @@ export const usePayment = () => {
                             '/razorpay/verify/',
                             { ...response }
                         );
+                        const { message, user_id } = verifyRes.data as any;
 
-                        const verifyData = verifyRes.data;
-
-                        if (verifyData?.success) {
+                        if (message?.toLowerCase().includes("verified")) {
+                            const user = details.userIdPayload;
+                            await Swal.fire({
+                                title: "🎉 Welcome to LioClubX!",
+                                html: `<div class="text-center leading-relaxed">
+                                        <h3 class="mb-1"><b>User ID:</b> ${user_id}</h3>
+                                        <h3 class="mb-1 "><b>Name:</b> ${user.first_name} ${user.last_name}</h3>
+                                        <h3 class="mb-1"><b>Mobile:</b> ${user.mobile}</h3>
+                                        <h3 class="mb-1"><b>Email:</b> ${user.email}</h3>
+                                        <h3 class="mb-1"><b>Password:</b> ${user.password}</h3>
+                                        <p class="mt-4 text-sm text-white">You have made right decision at the right time and chosen the great company who has offered you great avenues of financial freedom that you have been seeking for so long</p>
+                                        </div> `,
+                                icon: "success",
+                                confirmButtonText: "Go to Dashboard",
+                                background: "#0f0f0f",
+                                color: "#ffffff",
+                                customClass: {
+                                    popup: "rounded-2xl shadow-xl border border-purple-600",
+                                    title: "text-2xl font-bold text-purple-400 mb-3",
+                                    confirmButton:
+                                        "bg-gradient-to-r from-purple-600 to-violet-700 hover:from-purple-700 hover:to-violet-800 text-white px-6 py-2 rounded-md font-semibold focus:outline-none",
+                                    htmlContainer: "text-sm text-gray-200",
+                                },
+                                backdrop: `rgba(0,0,0,0.7)url("/sparkle.gif") center top / cover no-repeat`,
+                            });
                             navigate(`/dashboard/`);
                         } else {
                             setError("Payment verification failed.");
                         }
                     } catch (err: any) {
-
-                        //
-                        console.error("Verify status", err.response?.status);
-                        console.error("Verify data:", err.response?.data);
 
                         const e = err.response?.data;
                         if (e?.user_level_id?.[0]) {

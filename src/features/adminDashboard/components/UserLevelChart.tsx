@@ -15,7 +15,17 @@ import {
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-type LevelItem = { level: string | number; users: number }; // adapt to your API shape
+type LevelItem = { level: number; count: number };
+
+interface DashboardResponse {
+  total_members: number;
+  total_income: number;
+  total_active_level_6: number;
+  new_users_per_level: LevelItem[];
+  recent_payments: any[];
+  new_user_registrations: any[];
+  latest_report: any;
+}
 
 const UserLevelChart: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -26,18 +36,15 @@ const UserLevelChart: React.FC = () => {
     const fetchLevels = async () => {
       setLoading(true);
       try {
-        const res = await api.get("/user-levels/");
-        const raw = res.data.data || res.data;
+        // Changed endpoint to match your actual API
+        const res = await api.get("/dashboard/");
+        const data: DashboardResponse = res.data;
 
-        const formatted: LevelItem[] = Object.entries(raw).map(
-          ([level, users]) => ({
-            level,
-            users: Number(users),
-          })
-        );
-
-        setLevels(formatted);
+        // Extract new_users_per_level from the response
+        const levelsData = data.new_users_per_level || [];
+        setLevels(levelsData);
       } catch (err) {
+        console.error("Error fetching dashboard data:", err);
         setError("Unable to fetch user levels");
       } finally {
         setLoading(false);
@@ -47,18 +54,18 @@ const UserLevelChart: React.FC = () => {
     fetchLevels();
   }, []);
 
-  // map to chart data (ensure consistent string labels)
-  const labels = levels.map((d) => String(d.level));
-  const values = levels.map((d) => d.users);
+  // map to chart data
+  const labels = levels.map((d) => `Level ${d.level}`);
+  const values = levels.map((d) => d.count);
 
-  // optionally set a max that fits your data
-  const maxVal = values.length > 0 ? Math.max(20, ...values) : 20;
+  // Set a reasonable max value
+  const maxVal = values.length > 0 ? Math.max(5, Math.max(...values) + 2) : 5;
 
   const data = {
     labels,
     datasets: [
       {
-        label: "Users",
+        label: "New Users",
         data: values,
         backgroundColor: "#7129DD",
         borderRadius: 4,
@@ -71,7 +78,15 @@ const UserLevelChart: React.FC = () => {
     maintainAspectRatio: false,
     plugins: {
       legend: { display: false },
-      tooltip: { mode: "index" as const, intersect: false },
+      tooltip: { 
+        mode: "index" as const, 
+        intersect: false,
+        callbacks: {
+          label: function(context: any) {
+            return `New Users: ${context.parsed.y}`;
+          }
+        }
+      },
     },
     scales: {
       x: {
@@ -83,9 +98,9 @@ const UserLevelChart: React.FC = () => {
         grid: { color: "#FFFFFF17" },
         ticks: {
           color: "#9ca3af",
-          stepSize: 5,
+          stepSize: 1,
           callback: function (value: any) {
-            return value === 0 ? "0" : value;
+            return Number.isInteger(value) ? value : null;
           },
         },
         border: { display: false },
@@ -108,15 +123,17 @@ const UserLevelChart: React.FC = () => {
           </div>
         ) : error ? (
           <div className="text-red-400">{error}</div>
-        ) : values.length === 0 ? (
-          <div className="text-gray-400">No data to display</div>
+        ) : values.length === 0 || values.every(v => v === 0) ? (
+          <div className="flex items-center justify-center h-full text-gray-400">
+            No new users data to display
+          </div>
         ) : (
           <Bar data={data} options={options} />
         )}
       </div>
 
       <div className="flex items-center space-x-2">
-        <span className="text-gray-400 text-sm sm:ml-4 mr-4">Income</span>
+        <span className="text-gray-400 text-sm sm:ml-4 mr-4">New Users</span>
         <div className="w-34 h-2 bg-[#7129DD] rounded" />
       </div>
     </div>

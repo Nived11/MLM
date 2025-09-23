@@ -6,6 +6,7 @@ import moneybg from "../../../assets/images/money-bg.png";
 import { useSignupForm } from "../hooks/singupHook";
 import { usePayment } from "../../../hooks/use-payment";
 import axios from "axios";
+import { extractErrorMessages } from "../../../utils/helpers/extractErrorMessage";
 
 export const baseURL = import.meta.env.VITE_API_URL || "";
 const SignupForm: React.FC = () => {
@@ -22,10 +23,6 @@ const SignupForm: React.FC = () => {
         confirmPasswordValue,
         setConfirmPasswordValue,
         confirmError,
-        sponsorId,
-        setSponsorId,
-        sponsorName,
-        setSponsorName,
         handlePincodeBlur,
         pincodeStatus,
         setConfirmError,
@@ -34,6 +31,30 @@ const SignupForm: React.FC = () => {
     } = useSignupForm();
     const { initiatePayment, isLoading: paymentLoading, error: paymentError } = usePayment();
     const [error, setError] = useState<string | null>(null);
+    const [sponsorId, setSponsorId] = useState("");
+    const [sponsorName, setSponsorName] = useState("");
+    const [sponsorError, setSponsorError] = useState("");
+    const fetchSponsorName = async (id: string) => {
+        if (!id) return;
+
+        try {
+            // POST the id in the body
+            const res = await axios.post(`${baseURL}/users/fullname/`, { user_id: id });
+
+            if (res.data && res.data.full_name) {
+                setSponsorName(res.data.full_name);
+                setSponsorError("");
+            } else {
+                setSponsorName("");
+                setSponsorError("Invalid Sponsor ID");
+            }
+        } catch (error) {
+            setSponsorName("");
+            setSponsorError("Invalid Sponsor ID");
+        }
+    };
+
+
 
     const onSubmit = async (data: any) => {
         setError("");
@@ -55,27 +76,17 @@ const SignupForm: React.FC = () => {
                 sponsor_id: data.sponsorId,
                 amount: data.amount
             };
-            console.log("Registration payload:", body);
-
             const res = await axios.post(`${baseURL}/register/`, body);
 
             const token = res.data.registration_token;
             if (res.status === 201 || res.status === 200) {
-                const paymentDetails = {
-                    amount: data.amount,
-                    user_email: data.email,
-                    user_name: `${data.firstName} ${data.lastName}`,
+                await initiatePayment({
                     registration_token: token,
-                    phone_number: data.mobile,
-                };
-                await initiatePayment(paymentDetails);
+                    userIdPayload: body
+                });
             }
         } catch (err: any) {
-            //
-            console.error("Registration error:", err.response?.data);
-            const msg =
-                err.response?.data?.detail || err.message || "Registration failed. Try again.";
-            setError(msg);
+            setError(extractErrorMessages(err) || "Registration failed. Try again.");
             return false;
         } finally {
             setFormLoading(false);
@@ -116,26 +127,13 @@ const SignupForm: React.FC = () => {
                                 placeholder="Sponsor ID"
                                 {...register("sponsorId")}
                                 value={sponsorId}
-                                onChange={(e) => {
-                                    const val = e.target.value;
-                                    setSponsorId(val);
-                                    const name =
-                                        {
-                                            LX10001: "Rahul Sharma",
-                                            LX10002: "Priya Singh",
-                                            LX10003: "Amit Patel",
-                                            LX88011: "Daralika V",
-                                        }[val.trim().toUpperCase()] || "";
-                                    setSponsorName(name);
-                                }}
+                                onChange={(e) => setSponsorId(e.target.value)}
+                                onBlur={() => fetchSponsorName(sponsorId)}
                                 className="w-full rounded-md px-4 py-3 text-black bg-white focus:ring-2 focus:ring-purple-600"
                             />
-                            {sponsorName && (
-                                <p className="text-green-500 text-sm mt-1">
-                                    Sponsor Name:{" "}
-                                    <span className="font-semibold">{sponsorName}</span>
-                                </p>
-                            )}
+
+                            {sponsorName && <p className="text-green-500 text-sm mt-1">Sponsor Name: <span className="font-semibold">{sponsorName}</span></p>}
+                            {sponsorError && <p className="text-red-600">{sponsorError}</p>}
                         </div>
                         {/* <input type="hidden" value={sponsorName} {...register("sponsorName")} /> */}
 
@@ -375,7 +373,7 @@ const SignupForm: React.FC = () => {
                                 {errors.terms.message}
                             </p>
                         )}
-                        {error && <p className="text-red-500 text-sm">{error}</p>}
+                        {error && <p className="text-red-500 md:col-span-2 text-center text-sm">{error}</p>}
 
                         {/* Button */}
                         <button

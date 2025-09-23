@@ -10,7 +10,6 @@ interface ProfilePopupProps {
   levelId: number;
 }
 
-
 const ProfilePopup: React.FC<ProfilePopupProps> = ({ isOpen, onClose, levelId }) => {
   const { referral, loading, error } = useFetchReferral(levelId, isOpen);
 

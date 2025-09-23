@@ -3,9 +3,9 @@ import React, { useEffect, useState } from 'react';
 // import chart from "../../../assets/images/chart.png";
 import profile from "../../../assets/images/profile.png";
 import axios from "axios";
+import { extractErrorMessages } from "../../../utils/helpers/extractErrorMessage";
 
 export const baseURL = import.meta.env.VITE_API_URL || "";
-
 interface LinkedUser {
     user_id: string;
     username: string;
@@ -43,7 +43,7 @@ const UserActivity: React.FC = () => {
                 setUserId(res.data.user_id);
                 setUsername(res.data.username);
             } catch (err: any) {
-                setError("Failed to fetch user levels");
+                setError(extractErrorMessages(err) || "Failed to fetch user Activity");
             } finally {
                 setLoading(false);
             }
@@ -51,11 +51,39 @@ const UserActivity: React.FC = () => {
         fetchLevels();
     }, []);
 
-    if (loading) return <div className="animate-pulse p-4">
-        <div className="h-6 w-32 bg-gray-300 rounded mb-4"></div>
-        <div className="h-6 w-48 bg-gray-300 rounded mb-4"></div>
-        <div className="h-6 w-40 bg-gray-300 rounded"></div>
-    </div>
+    if (loading) {
+        return (
+            <div className="bg-gradient-to-br to-blue-2 from-blue-1 rounded-3xl p-4 sm:p-6 flex flex-col gap-10 mb-5 max-w-270 animate-pulse">
+                <div className="flex flex-col sm:flex-row items-start gap-6 sm:gap-12 lg:gap-18 pl-2 pt-4 sm:pl-5">
+                    <div className="flex flex-col items-center sm:items-start w-full sm:w-auto">
+                        <div className="w-12 h-12 sm:w-20 sm:h-20 lg:w-22 lg:h-22 rounded-full bg-gray-500 mb-6 sm:mb-10 lg:mb-13" />
+                        <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-6">
+                            <div className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 bg-gray-500 rounded-full" />
+                            <div className="h-6 w-24 bg-gray-500 rounded" />
+                            <div className="h-6 w-32 bg-gray-500 rounded" />
+                        </div>
+                    </div>
+                </div>
+
+                <div className="w-full">
+                    <div className="flex items-center gap-2 sm:gap-8 lg:gap-9 ml-2 sm:ml-6">
+                        <div className="w-6 h-6 sm:w-7 sm:h-7 bg-gray-500 rounded-full" />
+                        <div className="h-6 w-40 bg-gray-500 rounded" />
+                    </div>
+
+                    <div className="pl-10 pr-5 sm:pl-6 md:pl-20 lg:pl-30 lg:pb-6 mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4 lg:gap-6 w-full">
+                        {Array.from({ length: 6 }).map((_, idx) => (
+                            <div key={idx} className="flex items-center justify-between xl:justify-start xl:gap-10 w-full">
+                                <div className="h-4 w-16 bg-gray-500 rounded" />
+                                <div className="h-6 w-24 bg-gray-500 rounded" />
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
     if (error) return <div className="text-red-500">{error}</div>;
 
     return (
@@ -70,7 +98,7 @@ const UserActivity: React.FC = () => {
                                 className="w-15 h-15 sm:w-20 sm:h-20 lg:w-22 lg:h-22 object-cover"
                             />
                         </div>
-                        <div className="flex flex-col items-center gap-2 sm:flex-row gap-1 sm:gap-6 lg:gap-8">
+                        <div className="flex flex-col items-center  sm:flex-row gap-1 sm:gap-6 lg:gap-8">
                             <UserIcon className="text-white w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8" />
                             <span className="text-white text-base sm:text-xl lg:text-2xl font-semibold">{userId || "--"}</span>
                             <span className="text-white text-base sm:text-xl lg:text-2xl font-semibold">
@@ -101,7 +129,7 @@ const UserActivity: React.FC = () => {
                 ) : (
                     <div className="pl-10 pr-5 sm:pl-6 md:pl-20 lg:pl-30 lg:pb-6 mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4 lg:gap-6 w-full">
                         {userLevels
-                            .filter(req => req.linked_user.user_id) // only show if user_id exists
+                            .filter(req => req.linked_user.user_id)
                             .map((req) => {
                                 const isPaid = req.payment_status?.toLowerCase() === "paid";
 

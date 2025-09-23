@@ -5,6 +5,7 @@ import gpayImg from "../../../assets/images/gpay.png";
 import { IoLogoWhatsapp } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import ProfilePopup from "./ProfilePopup";
+import { useFetchReferral } from "../hooks/useFetchReferral";
 
 interface HelpCardProps {
   level: number;
@@ -17,6 +18,22 @@ interface HelpCardProps {
 const HelpCard = ({ level, amount, status, levelId, gpay = true }: HelpCardProps) => {
   const navigate = useNavigate();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+
+  const [alertMessage, setAlertMessage] = useState<string | null>(null);
+
+  const { referral, loading } = useFetchReferral(levelId, true);
+
+  const handleWhatsAppClick = () => {
+    if (!referral?.whatsapp_number) {
+      setAlertMessage("Referrer contact not available");
+      return;
+    }
+    const message = `Hello, I’m interested in supporting you for Level ${level} with amount ₹${amount}.`;
+    const whatsappUrl = `https://wa.me/${referral.whatsapp_number}?text=${encodeURIComponent(
+      message
+    )}`;
+    window.open(whatsappUrl, "_blank");
+  };
 
   return (
     <>
@@ -58,8 +75,14 @@ const HelpCard = ({ level, amount, status, levelId, gpay = true }: HelpCardProps
             </div>
 
             <button
-              onClick={() => navigate("/send-help/payment")}
-              className="w-[115px] h-[24px] rounded-[8px] bg-white text-[#6A00D4] shadow-[0px_4px_4px_0px_#FFFFFF40] text-xs font-normal flex items-center justify-center"
+              onClick={() =>
+                navigate("/send-help/payment", { state: { levelId } })
+              }
+              disabled={status === "Pending"}
+              className={`w-[115px] h-[24px] rounded-[8px] ${status === "Pending"
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-white text-[#6A00D4]"
+                } shadow-[0px_4px_4px_0px_#FFFFFF40] text-xs font-normal flex items-center justify-center`}
             >
               Pay Now
             </button>
@@ -77,7 +100,11 @@ const HelpCard = ({ level, amount, status, levelId, gpay = true }: HelpCardProps
             </div>
           </Button>
 
-          <button className="flex items-center justify-center">
+          <button
+            className="flex items-center justify-center disabled:opacity-50"
+            onClick={handleWhatsAppClick}
+            disabled={loading}
+          >
             <IoLogoWhatsapp size={35} className="text-white" />
           </button>
         </div>
@@ -87,8 +114,22 @@ const HelpCard = ({ level, amount, status, levelId, gpay = true }: HelpCardProps
         <ProfilePopup
           isOpen={isProfileOpen}
           onClose={() => setIsProfileOpen(false)}
-          levelId={levelId} 
+          levelId={levelId}
         />
+      )}
+
+      {alertMessage && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/25 z-50">
+          <div className="bg-white text-black rounded-lg shadow-lg p-6 w-[300px] text-center">
+            <p className="text-sm mb-4">{alertMessage}</p>
+            <Button
+              onClick={() => setAlertMessage(null)}
+              className="w-full bg-[#6A00D4] text-white rounded-lg"
+            >
+              OK
+            </Button>
+          </div>
+        </div>
       )}
     </>
   );
